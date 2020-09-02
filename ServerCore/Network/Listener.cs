@@ -7,10 +7,13 @@ namespace ServerCore.Network
 {
     public sealed class Listener : AsyncListenerEventDispatcher
     {
+        #region Properties
         private Socket mSocket;
         private Int32 mPort;
         private Int32 mListening;
+        #endregion
 
+        #region Methods
         private Listener(int port)
         {
             mPort = port;
@@ -43,7 +46,7 @@ namespace ServerCore.Network
             try
             {
                 Interlocked.Decrement(ref mListening);
-                
+
                 if (mSocket != null && mSocket.IsBound)
                 {
                     mSocket.Close(100);
@@ -54,7 +57,9 @@ namespace ServerCore.Network
                 ErrorOccured(new AsyncSocketErrorEventArgs(e));
             }
         }
+        #endregion
 
+        #region Private
         private void BeginAccept()
         {
             mSocket.BeginAccept(new AsyncCallback(AcceptResultCallback), mSocket);
@@ -81,5 +86,6 @@ namespace ServerCore.Network
                 ErrorOccured(new AsyncSocketErrorEventArgs(e));
             }
         }
+        #endregion
     }
 }

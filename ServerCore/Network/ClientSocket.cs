@@ -6,6 +6,7 @@ namespace ServerCore.Network
 {
     public class ClientSocket : AsyncClientSocketEventDispatcher, IClientSocket
     {
+        #region Properties
         private Socket mConnection;
 
         private Object mCalledClosedLock;
@@ -13,7 +14,9 @@ namespace ServerCore.Network
 
         public Int32 MaxReceiveBufferSize { get; }
         public Int32 MaxSendBufferSize { get; }
+        #endregion
 
+        #region Methods
         public ClientSocket()
         {
             mCalledClosedLock = new Object();
@@ -54,25 +57,6 @@ namespace ServerCore.Network
             }
         }
 
-        private void ConnectResultCallBack(IAsyncResult ar)
-        {
-            try
-            {
-                AsyncIOConnectContext context = (AsyncIOConnectContext)ar.AsyncState;
-                context.Connection.EndConnect(ar);
-
-                Receive();
-
-                IsCalledClosed(false);
-
-                Connected();
-            }
-            catch (Exception e)
-            {
-                ErrorOccured(new AsyncSocketErrorEventArgs(e));
-            }
-        }
-
         public void BlockingClose(bool enableShutdown = false, SocketShutdown shutdownOption = SocketShutdown.Both)
         {
             try
@@ -99,6 +83,67 @@ namespace ServerCore.Network
 
                 mConnection.Shutdown(shutdownOption);
                 mConnection.BeginDisconnect(false, new AsyncCallback(DisconnectResultCallBack), context);
+            }
+            catch (Exception e)
+            {
+                ErrorOccured(new AsyncSocketErrorEventArgs(e));
+            }
+        }
+
+        public bool Send(Byte[] buffer, bool blocking = false)
+        {
+            // 빈 버퍼는 보내지 않는다
+            if (buffer.Length <= 0)
+            {
+                return false;
+            }
+
+            try
+            {
+                // 한번에 못보내는 경우는 총 두 가지이다.
+                // 1. 네트워크 상태 (극히 드뭄)
+                // 2. buffer가 한번에 보낼 수 있는 size를 넘어갔을 때
+
+                if (blocking)
+                {
+                    Int32 bytesWritten = 0;
+
+                    while (bytesWritten != buffer.Length)
+                    {
+                        bytesWritten += mConnection.Send(buffer);
+                    }
+
+                    Sent(new AsyncSocketSendEventArgs(bytesWritten));
+
+                    return true;
+                }
+
+                AsyncIOSendContext context = new AsyncIOSendContext(mConnection, buffer);
+                mConnection.BeginSend(buffer, 0, buffer.Length, 0, new AsyncCallback(SendResultCallBack), context);
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                ErrorOccured(new AsyncSocketErrorEventArgs(e));
+                return false;
+            }
+        }
+        #endregion
+
+        #region Private
+        private void ConnectResultCallBack(IAsyncResult ar)
+        {
+            try
+            {
+                AsyncIOConnectContext context = (AsyncIOConnectContext)ar.AsyncState;
+                context.Connection.EndConnect(ar);
+
+                Receive();
+
+                IsCalledClosed(false);
+
+                Connected();
             }
             catch (Exception e)
             {
@@ -170,46 +215,6 @@ namespace ServerCore.Network
             }
         }
 
-        public bool Send(Byte[] buffer, bool blocking = false)
-        {
-            // 빈 버퍼는 보내지 않는다
-            if (buffer.Length <= 0)
-            {
-                return false;
-            }
-
-            try
-            {
-                // 한번에 못보내는 경우는 총 두 가지이다.
-                // 1. 네트워크 상태 (극히 드뭄)
-                // 2. buffer가 한번에 보낼 수 있는 size를 넘어갔을 때
-
-                if (blocking)
-                {
-                    Int32 bytesWritten = 0;
-
-                    while (bytesWritten != buffer.Length)
-                    {
-                        bytesWritten += mConnection.Send(buffer);
-                    }
-
-                    Sent(new AsyncSocketSendEventArgs(bytesWritten));
-
-                    return true;
-                }
-
-                AsyncIOSendContext context = new AsyncIOSendContext(mConnection, buffer);
-                mConnection.BeginSend(buffer, 0, buffer.Length, 0, new AsyncCallback(SendResultCallBack), context);
-
-                return true;
-            }
-            catch (Exception e)
-            {
-                ErrorOccured(new AsyncSocketErrorEventArgs(e));
-                return false;
-            }
-        }
-
         private void SendResultCallBack(IAsyncResult ar)
         {
             try
@@ -250,5 +255,6 @@ namespace ServerCore.Network
 
             mConnection.Dispose();
         }
+        #endregion
     }
 }
