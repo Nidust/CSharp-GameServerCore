@@ -30,12 +30,10 @@ namespace ServerCore.Network
     public class AsyncSocketSendEventArgs : AsyncSocketEventArgs
     {
         public Int32 BytesWritten { get; }
-        public Boolean SendComplete { get; }
 
-        public AsyncSocketSendEventArgs(Int32 sendBytes, Boolean sendComplete)
+        public AsyncSocketSendEventArgs(Int32 sendBytes)
         {
             BytesWritten = sendBytes;
-            SendComplete = sendComplete;
         }
     }
 

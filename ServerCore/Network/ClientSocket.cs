@@ -7,32 +7,32 @@ namespace ServerCore.Network
     public class ClientSocket : AsyncClientSocketEventDispatcher, IClientSocket
     {
         private Socket mConnection;
-        
-        private Int32 mMaxReceiveBufferSize;
-        private Int32 mMaxSendBufferSize;
 
         private Object mCalledClosedLock;
         private Boolean mCalledClosed;
 
+        public Int32 MaxReceiveBufferSize { get; }
+        public Int32 MaxSendBufferSize { get; }
+
         public ClientSocket()
         {
-            mCalledClosedLock = new object();
+            mCalledClosedLock = new Object();
             mCalledClosed = false;
         }
 
         public ClientSocket(int maxReceiveBufferSize, int maxSendBufferSize)
             : this()
         {
-            mMaxReceiveBufferSize = maxReceiveBufferSize;
-            mMaxSendBufferSize = maxSendBufferSize;
+            MaxReceiveBufferSize = maxReceiveBufferSize;
+            MaxSendBufferSize = maxSendBufferSize;
         }
 
         public ClientSocket(Socket connection, int maxReceiveBufferSize, int maxSendBufferSize)
             : this(maxReceiveBufferSize, maxSendBufferSize)
         {
             mConnection = connection;
-            mConnection.ReceiveBufferSize = mMaxReceiveBufferSize;
-            mConnection.SendBufferSize = mMaxSendBufferSize;
+            mConnection.ReceiveBufferSize = MaxReceiveBufferSize;
+            mConnection.SendBufferSize = MaxSendBufferSize;
         }
 
         public bool Connect(String hostAddress, Int32 port)
@@ -126,15 +126,12 @@ namespace ServerCore.Network
             }
         }
 
-        // TODO: ReceivedComplete
-        // 한번에 못받는 경우가 생길 수 있다.
-        // 패킷 프로토콜 정해서 버퍼 크기 넘어가더라도 받아올 수 있도록 수정하자
         private void Receive()
         {
             try
             {
                 // TODO: ContextPool
-                AsyncIOReceiveContext context = new AsyncIOReceiveContext(mConnection, mMaxReceiveBufferSize);
+                AsyncIOReceiveContext context = new AsyncIOReceiveContext(mConnection, MaxReceiveBufferSize);
                 mConnection.BeginReceive(context.Buffer, 0, context.Buffer.Length, 0, new AsyncCallback(ReceiveResultCallback), context);
             }
             catch (Exception e)
@@ -190,15 +187,13 @@ namespace ServerCore.Network
                 if (blocking)
                 {
                     Int32 bytesWritten = 0;
-                    Boolean sendComplete = false;
 
-                    while (sendComplete == false)
+                    while (bytesWritten != buffer.Length)
                     {
                         bytesWritten += mConnection.Send(buffer);
-                        sendComplete = bytesWritten == buffer.Length;
-
-                        Sent(new AsyncSocketSendEventArgs(bytesWritten, sendComplete));
                     }
+
+                    Sent(new AsyncSocketSendEventArgs(bytesWritten));
 
                     return true;
                 }
@@ -222,14 +217,14 @@ namespace ServerCore.Network
                 AsyncIOSendContext context = (AsyncIOSendContext)ar;
                 context.BytesWritten += context.Connection.EndSend(ar);
 
-                Sent(new AsyncSocketSendEventArgs(context.BytesWritten, context.SendComplete()));
-
                 if (context.SendComplete() == false)
                 {
                     // 나머지 보낸다
                     mConnection.BeginSend(context.Buffer, context.BytesWritten, context.Buffer.Length, 0, new AsyncCallback(SendResultCallBack), context);
                     return;
                 }
+
+                Sent(new AsyncSocketSendEventArgs(context.BytesWritten));
             }
             catch (Exception e)
             {
