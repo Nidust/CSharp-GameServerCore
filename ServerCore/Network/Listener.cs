@@ -5,7 +5,7 @@ using System.Threading;
 
 namespace ServerCore.Network
 {
-    public sealed class Listener : AsyncListenerEventDispatcher
+    public class Listener : AsyncListenerEventDispatcher
     {
         #region Properties
         private Socket mSocket;
@@ -14,14 +14,9 @@ namespace ServerCore.Network
         #endregion
 
         #region Methods
-        private Listener(int port)
+        public Listener(int port)
         {
             mPort = port;
-        }
-
-        public static Listener Create(int port)
-        {
-            return new Listener(port);
         }
 
         public void Start()
@@ -77,7 +72,7 @@ namespace ServerCore.Network
                 Socket listener = (Socket)ar.AsyncState;
                 Socket connection = listener.EndAccept(ar);
 
-                Accepted(new AsyncSocketAcceptEventArgs(connection));
+                Accepted(new AsyncSocketAcceptEventArgs(new ClientSocket(connection, 65535, 65535)));
 
                 BeginAccept();
             }

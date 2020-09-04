@@ -1,8 +1,10 @@
-﻿namespace ServerCore.Session
+﻿using ServerCore.Packet;
+
+namespace ServerCore.Session
 {
     public interface ISessionManager
     {
-        void CreateSession(ISession session);
+        void Broadcast(IPacket packet);
         void DestroySession(ISession session);
     }
 }

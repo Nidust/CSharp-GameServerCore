@@ -19,9 +19,9 @@ namespace ServerCore.Network
 
     public class AsyncSocketAcceptEventArgs : AsyncSocketEventArgs
     {
-        public Socket Connection { get; }
+        public ClientSocket Connection { get; }
 
-        public AsyncSocketAcceptEventArgs(Socket connection)
+        public AsyncSocketAcceptEventArgs(ClientSocket connection)
         {
             Connection = connection;
         }
