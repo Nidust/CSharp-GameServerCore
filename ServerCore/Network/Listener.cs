@@ -72,7 +72,10 @@ namespace ServerCore.Network
                 Socket listener = (Socket)ar.AsyncState;
                 Socket connection = listener.EndAccept(ar);
 
-                Accepted(new AsyncSocketAcceptEventArgs(new ClientSocket(connection, 65535, 65535)));
+                ClientSocket newConnection = new ClientSocket(connection, 65535, 65535);
+                newConnection.Receive();
+
+                Accepted(new AsyncSocketAcceptEventArgs(newConnection));
 
                 BeginAccept();
             }

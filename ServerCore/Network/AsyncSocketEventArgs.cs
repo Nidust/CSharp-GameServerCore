@@ -40,10 +40,12 @@ namespace ServerCore.Network
     public class AsyncSocketReceiveEventArgs : AsyncSocketEventArgs
     {
         public Byte[] ReceiveBuffer { get; }
+        public Int32 ReceiveBytes { get; }
 
-        public AsyncSocketReceiveEventArgs(Byte[] buffer)
+        public AsyncSocketReceiveEventArgs(Byte[] buffer, Int32 receiveBytes)
         {
             ReceiveBuffer = buffer;
+            ReceiveBytes = receiveBytes;
         }
     }
 }

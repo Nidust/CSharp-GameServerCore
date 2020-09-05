@@ -45,8 +45,8 @@ namespace ServerCore.Network
                 IPAddress[] ips = Dns.GetHostAddresses(hostAddress);
                 IPEndPoint remoteEndPoint = new IPEndPoint(ips[0], port);
 
-                AsyncIOConnectContext context = new AsyncIOConnectContext(mConnection);
-                mConnection.BeginConnect(remoteEndPoint, new AsyncCallback(ConnectResultCallBack), context);
+                mConnection = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                mConnection.BeginConnect(remoteEndPoint, new AsyncCallback(ConnectResultCallBack), new AsyncIOConnectContext(mConnection));
 
                 return true;
             }
@@ -68,6 +68,11 @@ namespace ServerCore.Network
 
                 mConnection.Close();
                 mConnection.Dispose();
+
+                if (IsCalledClosed(true))
+                {
+                    Disconnected();
+                }
             }
             catch (Exception e)
             {
@@ -129,6 +134,28 @@ namespace ServerCore.Network
                 return false;
             }
         }
+
+        public void Receive()
+        {
+            try
+            {
+                // TODO: ContextPool
+                AsyncIOReceiveContext context = new AsyncIOReceiveContext(mConnection, MaxReceiveBufferSize);
+                mConnection.BeginReceive(context.Buffer, 0, context.Buffer.Length, 0, new AsyncCallback(ReceiveResultCallback), context);
+            }
+            catch (Exception e)
+            {
+                ErrorOccured(new AsyncSocketErrorEventArgs(e));
+            }
+        }
+
+        public bool IsClosed()
+        {
+            lock (mCalledClosedLock)
+            {
+                return mCalledClosed;
+            }
+        }
         #endregion
 
         #region Private
@@ -157,27 +184,13 @@ namespace ServerCore.Network
             {
                 AsyncIODisconnectContext context = (AsyncIODisconnectContext)ar.AsyncState;
                 context.Connection.EndDisconnect(ar);
-
+                
                 if (IsCalledClosed(true) == false)
                 {
                     Disconnected();
                 }
 
-                mConnection.Dispose();
-            }
-            catch (Exception e)
-            {
-                ErrorOccured(new AsyncSocketErrorEventArgs(e));
-            }
-        }
-
-        private void Receive()
-        {
-            try
-            {
-                // TODO: ContextPool
-                AsyncIOReceiveContext context = new AsyncIOReceiveContext(mConnection, MaxReceiveBufferSize);
-                mConnection.BeginReceive(context.Buffer, 0, context.Buffer.Length, 0, new AsyncCallback(ReceiveResultCallback), context);
+                context.Connection.Dispose();
             }
             catch (Exception e)
             {
@@ -194,7 +207,7 @@ namespace ServerCore.Network
 
                 if (bytesRead > 0)
                 {
-                    Received(new AsyncSocketReceiveEventArgs(context.Buffer));
+                    Received(new AsyncSocketReceiveEventArgs(context.Buffer, bytesRead));
                 }
                 else if (bytesRead == 0)
                 {
@@ -219,7 +232,7 @@ namespace ServerCore.Network
         {
             try
             {
-                AsyncIOSendContext context = (AsyncIOSendContext)ar;
+                AsyncIOSendContext context = (AsyncIOSendContext)ar.AsyncState;
                 context.BytesWritten += context.Connection.EndSend(ar);
 
                 if (context.SendComplete() == false)
@@ -252,8 +265,6 @@ namespace ServerCore.Network
         protected override void ErrorOccured(AsyncSocketErrorEventArgs args)
         {
             base.ErrorOccured(args);
-
-            mConnection.Dispose();
         }
         #endregion
     }

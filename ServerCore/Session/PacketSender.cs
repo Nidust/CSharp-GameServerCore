@@ -77,6 +77,9 @@ namespace ServerCore.Session
             mSendBuffer = new Byte[mSendBufferSize];
             mSentBufferSize = 0;
 
+            Buffer.BlockCopy(BitConverter.GetBytes(header.Type), 0, mSendBuffer, 0, sizeof(UInt16));
+            Buffer.BlockCopy(BitConverter.GetBytes(header.Size), 0, mSendBuffer, sizeof(UInt16), sizeof(UInt16));
+
             SendBuffer(socket);
         }
 

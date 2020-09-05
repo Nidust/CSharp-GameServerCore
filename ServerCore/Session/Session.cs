@@ -8,29 +8,41 @@ namespace ServerCore.Session
     {
         #region Properties
         private ISessionManager mManager;
-        private ClientSocket mSocket;
+        protected ClientSocket mSocket;
 
         private PacketSender mSender;
         private PacketReceiver mReceiver;
 
         // TODO: ReaderWriterLock 구현
-        private Object mSessionLock;
+        protected Object mLock;
         #endregion
 
         #region Abstract Methods
-        public abstract void OnConnect();
-        public abstract void OnDisconnect();
-        public abstract void OnPacket(IPacket packet);
-        public abstract void OnSend(); // 무슨 패킷 보냈는지도 필요할까..?
+        protected abstract void OnConnect();
+        protected abstract void OnDisconnect();
+        protected abstract void OnPacket(IPacket packet);
+        protected abstract void OnSend(); // 무슨 패킷 보냈는지도 필요할까..?
         #endregion
 
         #region Methods
         private Session()
         {
-            mSessionLock = new Object();
+            mManager = null;
+            mLock = new Object();
 
             mSender = new PacketSender();
             mReceiver = new PacketReceiver();
+        }
+
+        public Session(Int32 receiveBufferSize, Int32 sendBufferSize)
+            : this()
+        {
+            mSocket = new ClientSocket(receiveBufferSize, sendBufferSize);
+            mSocket.OnConnect += new AsyncSocketConnectEventHandler(OnConnectEvent);
+            mSocket.OnDisconnect += new AsyncSocketDisconnectEventHandler(OnDisconnectEvent);
+            mSocket.OnError += new AsyncSocketErrorEventHandler(OnError);
+            mSocket.OnSend += new AsyncSocketSendEventHandler(OnSendEvent);
+            mSocket.OnReceive += new AsyncSocketReceiveEventHandler(OnReceiveEvent);
         }
 
         public Session(ISessionManager manager, ClientSocket socket)
@@ -39,6 +51,7 @@ namespace ServerCore.Session
             mManager = manager;
             
             mSocket = socket;
+            mSocket.OnConnect += new AsyncSocketConnectEventHandler(OnConnectEvent);
             mSocket.OnDisconnect += new AsyncSocketDisconnectEventHandler(OnDisconnectEvent);
             mSocket.OnError += new AsyncSocketErrorEventHandler(OnError);
             mSocket.OnSend += new AsyncSocketSendEventHandler(OnSendEvent);
@@ -47,7 +60,7 @@ namespace ServerCore.Session
 
         public virtual void Send(IPacket packet)
         {
-            lock (mSessionLock)
+            lock (mLock)
             {
                 mSender.Send(mSocket, packet);
             }
@@ -55,7 +68,7 @@ namespace ServerCore.Session
 
         public void Disconnect()
         {
-            lock (mSessionLock)
+            lock (mLock)
             {
                 mSocket.Close();
             }
@@ -65,7 +78,7 @@ namespace ServerCore.Session
         #region Network Events
         private void OnSendEvent(object sender, AsyncSocketSendEventArgs e)
         {
-            lock (mSessionLock)
+            lock (mLock)
             {
                 Boolean sendComplete = mSender.Sending(mSocket, (UInt16)e.BytesWritten);
 
@@ -82,9 +95,9 @@ namespace ServerCore.Session
         {
             IPacket receivePacket;
 
-            lock (mSessionLock)
+            lock (mLock)
             {
-                Boolean receiveComeplete = mReceiver.Receiving(e.ReceiveBuffer, out receivePacket);
+                Boolean receiveComeplete = mReceiver.Receiving(e.ReceiveBuffer, e.ReceiveBytes, out receivePacket);
 
                 if (receiveComeplete == false)
                 {
@@ -95,9 +108,17 @@ namespace ServerCore.Session
             OnPacket(receivePacket);
         }
 
+        private void OnConnectEvent(object sender)
+        {
+            OnConnect();
+        }
+
         private void OnDisconnectEvent(object sender)
         {
-            mManager.DestroySession(this);
+            if (mManager != null)
+                mManager.DestroySession(this);
+
+            OnDisconnect();
         }
 
         private void OnError(object sender, AsyncSocketErrorEventArgs e)

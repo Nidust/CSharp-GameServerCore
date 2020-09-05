@@ -19,11 +19,14 @@ namespace ServerCore.Session
         #endregion
 
         #region Methods
-        public SessionManager(int port)
+        public SessionManager()
         {
             mLock = new Object();
             mSessions = new List<ISession>();
+        }
 
+        public void StartListen(Int32 port)
+        {
             mListener = new Listener(port);
             mListener.OnAccept += new AsyncSocketAcceptEventHandler(OnAcceptEvent);
             mListener.OnError += new AsyncSocketErrorEventHandler(OnErrorEvent);
@@ -57,6 +60,8 @@ namespace ServerCore.Session
             lock (mLock)
             {
                 Session newSesion = CreateSession(this, e.Connection);
+                e.Connection.Connected();
+
                 mSessions.Add(newSesion);
             }
         }

@@ -36,7 +36,7 @@ namespace ServerCore.Network
         public event AsyncSocketSendEventHandler OnSend;
         public event AsyncSocketReceiveEventHandler OnReceive;
 
-        protected void Connected()
+        public void Connected()
         {
             OnConnect?.Invoke(this);
         }
