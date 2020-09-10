@@ -1,6 +1,6 @@
-﻿using ServerCore.Packet;
+﻿using Core.Network.Packet;
 
-namespace ServerCore.Session
+namespace Core.Server.Session
 {
     public interface ISessionManager
     {

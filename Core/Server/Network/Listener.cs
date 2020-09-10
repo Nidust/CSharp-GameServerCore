@@ -1,9 +1,10 @@
-﻿using System;
+﻿using Core.Network.Socket;
+using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 
-namespace ServerCore.Network
+namespace Core.Server.Network
 {
     public class Listener : AsyncListenerEventDispatcher
     {

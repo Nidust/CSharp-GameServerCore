@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Net;
 using System.Net.Sockets;
+using NetworkSocket = System.Net.Sockets.Socket;
 
-namespace ServerCore.Network
+namespace Core.Network.Socket
 {
     public class ClientSocket : AsyncClientSocketEventDispatcher, IClientSocket
     {
         #region Properties
-        private Socket mConnection;
+        private NetworkSocket mConnection;
 
         private Object mCalledClosedLock;
         private Boolean mCalledClosed;
@@ -30,7 +31,7 @@ namespace ServerCore.Network
             MaxSendBufferSize = maxSendBufferSize;
         }
 
-        public ClientSocket(Socket connection, int maxReceiveBufferSize, int maxSendBufferSize)
+        public ClientSocket(NetworkSocket connection, int maxReceiveBufferSize, int maxSendBufferSize)
             : this(maxReceiveBufferSize, maxSendBufferSize)
         {
             mConnection = connection;
@@ -45,7 +46,7 @@ namespace ServerCore.Network
                 IPAddress[] ips = Dns.GetHostAddresses(hostAddress);
                 IPEndPoint remoteEndPoint = new IPEndPoint(ips[0], port);
 
-                mConnection = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                mConnection = new NetworkSocket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 mConnection.BeginConnect(remoteEndPoint, new AsyncCallback(ConnectResultCallBack), new AsyncIOConnectContext(mConnection));
 
                 return true;

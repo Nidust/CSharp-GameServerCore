@@ -1,9 +1,10 @@
-﻿using ServerCore.Network;
-using ServerCore.Packet;
+﻿using Core.Network.Packet;
+using Core.Network.Socket;
+using Core.Server.Network;
 using System;
 using System.Collections.Generic;
 
-namespace ServerCore.Session
+namespace Core.Server.Session
 {
     public abstract class SessionManager : ISessionManager
     {

@@ -1,6 +1,6 @@
 ﻿using System.Net.Sockets;
 
-namespace ServerCore.Network
+namespace Core.Network.Socket
 {
     public interface IClientSocket
     {

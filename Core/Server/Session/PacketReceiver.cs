@@ -1,7 +1,7 @@
-﻿using ServerCore.Packet;
+﻿using Core.Network.Packet;
 using System;
 
-namespace ServerCore.Session
+namespace Core.Server.Session
 {
     public sealed class PacketReceiver
     {

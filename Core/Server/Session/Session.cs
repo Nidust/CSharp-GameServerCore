@@ -1,8 +1,8 @@
-﻿using ServerCore.Network;
-using ServerCore.Packet;
+﻿using Core.Network.Packet;
+using Core.Network.Socket;
 using System;
 
-namespace ServerCore.Session
+namespace Core.Server.Session
 {
     public abstract class Session : ISession
     {

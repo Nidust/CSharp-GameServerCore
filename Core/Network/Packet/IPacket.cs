@@ -1,4 +1,4 @@
-﻿namespace ServerCore.Packet
+﻿namespace Core.Network.Packet
 {
     public interface IPacket
     {

@@ -1,13 +1,13 @@
 ﻿using System;
 
-namespace ServerCore.Network
+namespace Core.Network.Socket
 {
-    public delegate void AsyncSocketErrorEventHandler(object sender, AsyncSocketErrorEventArgs e);
-    public delegate void AsyncSocketAcceptEventHandler(object sender, AsyncSocketAcceptEventArgs e);
-    public delegate void AsyncSocketConnectEventHandler(object sender);
-    public delegate void AsyncSocketDisconnectEventHandler(object sender);
-    public delegate void AsyncSocketSendEventHandler(object sender, AsyncSocketSendEventArgs e);
-    public delegate void AsyncSocketReceiveEventHandler(object sender, AsyncSocketReceiveEventArgs e);
+    public delegate void AsyncSocketErrorEventHandler(Object sender, AsyncSocketErrorEventArgs e);
+    public delegate void AsyncSocketAcceptEventHandler(Object sender, AsyncSocketAcceptEventArgs e);
+    public delegate void AsyncSocketConnectEventHandler(Object sender);
+    public delegate void AsyncSocketDisconnectEventHandler(Object sender);
+    public delegate void AsyncSocketSendEventHandler(Object sender, AsyncSocketSendEventArgs e);
+    public delegate void AsyncSocketReceiveEventHandler(Object sender, AsyncSocketReceiveEventArgs e);
 
     public abstract class AsyncSocketEventDispatcher
     {

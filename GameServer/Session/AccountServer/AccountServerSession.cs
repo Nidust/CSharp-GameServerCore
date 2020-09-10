@@ -1,6 +1,6 @@
-﻿using ServerCore.Packet;
+﻿using Core.Network.Packet;
 using System;
-using NetworkSession = ServerCore.Session.Session;
+using NetworkSession = Core.Server.Session.Session;
 
 namespace GameServer.Session.AccountServer
 {

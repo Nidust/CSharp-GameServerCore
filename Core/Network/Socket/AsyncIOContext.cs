@@ -1,13 +1,13 @@
 ﻿using System;
-using System.Net.Sockets;
+using NetworkSocket = System.Net.Sockets.Socket;
 
-namespace ServerCore.Network
+namespace Core.Network.Socket
 {
     public abstract class AsyncIOContext
     {
-        public Socket Connection { get; }
+        public NetworkSocket Connection { get; }
 
-        public AsyncIOContext(Socket connection)
+        public AsyncIOContext(NetworkSocket connection)
         {
             Connection = connection;
         }
@@ -15,7 +15,7 @@ namespace ServerCore.Network
 
     public class AsyncIOConnectContext : AsyncIOContext
     {
-        public AsyncIOConnectContext(Socket connection)
+        public AsyncIOConnectContext(NetworkSocket connection)
             : base(connection)
         {
         }
@@ -23,7 +23,7 @@ namespace ServerCore.Network
 
     public class AsyncIODisconnectContext : AsyncIOContext
     {
-        public AsyncIODisconnectContext(Socket connection)
+        public AsyncIODisconnectContext(NetworkSocket connection)
             : base(connection)
         {
         }
@@ -34,7 +34,7 @@ namespace ServerCore.Network
         public Byte[] Buffer { get; }
         public Int32 BytesWritten { get; set; }
 
-        public AsyncIOSendContext(Socket connection, Byte[] buffer)
+        public AsyncIOSendContext(NetworkSocket connection, Byte[] buffer)
             : base(connection)
         {
             Buffer = buffer;
@@ -50,7 +50,7 @@ namespace ServerCore.Network
     {
         public Byte[] Buffer { get; set; }
 
-        public AsyncIOReceiveContext(Socket connection, int bufferSize) 
+        public AsyncIOReceiveContext(NetworkSocket connection, int bufferSize) 
             : base(connection)
         {
             Buffer = new Byte[bufferSize];

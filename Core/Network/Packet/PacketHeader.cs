@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ServerCore.Packet
+namespace Core.Network.Packet
 {
     public struct PacketHeader
     {
