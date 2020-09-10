@@ -2,6 +2,5 @@
 {
     public interface IPacket
     {
-        PacketHeader GetHedaer();
     }
 }

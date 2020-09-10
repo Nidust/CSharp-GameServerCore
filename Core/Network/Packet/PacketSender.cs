@@ -32,7 +32,7 @@ namespace Core.Network.Packet
 
         public bool Sending(ClientSocket socket, UInt16 sendBytes)
         {
-            // 보내야 하는 사이즈를 넘어갔을 경우, 큰 문제가 있다
+            // 보내야 하는 사이즈를 넘어갔을 경우
             if (mSentBufferSize + sendBytes > mSendBufferSize)
             {
                 throw new ArgumentOutOfRangeException($"Packet Sending Error");
@@ -69,15 +69,9 @@ namespace Core.Network.Packet
                 return;
             }
 
-            // TODO: Packet Serializer 구현
-            PacketHeader header = sendPacket.GetHedaer();
-
-            mSendBufferSize = (UInt16)(PacketHeader.HeaderSize + header.Size);
-            mSendBuffer = new Byte[mSendBufferSize];
+            mSendBuffer = PacketSerializer.Serailize(sendPacket);
+            mSendBufferSize = (UInt16)mSendBuffer.Length;
             mSentBufferSize = 0;
-
-            Buffer.BlockCopy(BitConverter.GetBytes(header.Type), 0, mSendBuffer, 0, sizeof(UInt16));
-            Buffer.BlockCopy(BitConverter.GetBytes(header.Size), 0, mSendBuffer, sizeof(UInt16), sizeof(UInt16));
 
             SendBuffer(socket);
         }

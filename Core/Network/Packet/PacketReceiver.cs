@@ -8,7 +8,10 @@ namespace Core.Network.Packet
         private Byte[] mBuffer;
         private Int32 mLength;
 
-        private PacketHeader mPacketHeader;
+        private UInt16 mPacketId;
+        private UInt16 mPacketSize;
+
+        private static UInt16 PacketHeaderSize = sizeof(UInt16) + sizeof(UInt16);
         #endregion
 
         #region Methods
@@ -21,20 +24,20 @@ namespace Core.Network.Packet
 
             if (IsReceivingPacket() == false)
             {
-                mPacketHeader.Type = BitConverter.ToUInt16(buffer, 0);
-                mPacketHeader.Size = BitConverter.ToUInt16(buffer, sizeof(UInt16));
+                mPacketId = BitConverter.ToUInt16(buffer, 0);
+                mPacketSize = BitConverter.ToUInt16(buffer, sizeof(UInt16));
 
-                mBuffer = new Byte[mPacketHeader.Size];
+                mBuffer = new Byte[mPacketSize];
                 mLength = 0;
 
-                offSet = PacketHeader.HeaderSize - 1;
-                length -= PacketHeader.HeaderSize;
+                offSet = PacketHeaderSize - 1;
+                length -= PacketHeaderSize;
             }
 
             // 패킷 사이즈가 넘어갔을 떄
-            if (mLength + length > mPacketHeader.Size)
+            if (mLength + length > mPacketSize)
             {
-                throw new ArgumentOutOfRangeException($"Packet Receive Error (PacketSize={mPacketHeader.Size}, PacketType={mPacketHeader.Type})");
+                throw new ArgumentOutOfRangeException($"Packet Receive Error (PacketSize={mPacketSize}, PacketType={mPacketId})");
             }
 
             Buffer.BlockCopy(buffer, offSet, mBuffer, mLength, length);
@@ -52,9 +55,8 @@ namespace Core.Network.Packet
         #region Private
         private bool ReceiveComeplete(out IPacket packet)
         {
-            // TODO: Packet Deserializer 구현
+            packet = PacketSerializer.Deserialize(mBuffer);
             mBuffer = null;
-            packet = null;
 
             return packet == null;
         }
@@ -66,7 +68,7 @@ namespace Core.Network.Packet
 
         private Boolean IsReceiveComplete()
         {
-            return mLength == mPacketHeader.Size;
+            return mLength == mPacketSize;
         }
         #endregion
     }

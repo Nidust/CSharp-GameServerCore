@@ -49,7 +49,7 @@ namespace Core.Server.Session
             : this()
         {
             mManager = manager;
-            
+
             mSocket = socket;
             mSocket.OnConnect += new AsyncSocketConnectEventHandler(OnConnectEvent);
             mSocket.OnDisconnect += new AsyncSocketDisconnectEventHandler(OnDisconnectEvent);
