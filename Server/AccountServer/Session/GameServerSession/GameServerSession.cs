@@ -26,8 +26,6 @@ namespace AccountServer.Session.GameServerSession
         protected override void OnPacket(IPacket packet)
         {
             Console.WriteLine($"Ping Packet From Game Server Session");
-
-            Send(new Pong());
         }
 
         protected override void OnSend()

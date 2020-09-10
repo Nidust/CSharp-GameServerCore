@@ -44,10 +44,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Packet\IPacket.cs" />
-    <Compile Include="Packet\PacketHeader.cs" />
     <Compile Include="Packet\PacketReceiver.cs" />
     <Compile Include="Packet\PacketSender.cs" />
-    <Compile Include="Packet\Ping.cs" />
+    <Compile Include="Packet\PacketSerializer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Socket\AsyncIOContext.cs" />
     <Compile Include="Socket\AsyncSocketEventArgs.cs" />

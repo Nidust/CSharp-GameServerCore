@@ -19,8 +19,6 @@ namespace GameServer.Session.AccountServer
         protected override void OnConnect()
         {
             Console.WriteLine("Connect Account Server...");
-
-            Send(new Ping());
         }
 
         protected override void OnDisconnect()
