@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AccountServer", "Server\Acc
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameServer", "Server\GameServer\GameServer.csproj", "{833F9688-3292-46E4-8644-84FA50C89642}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PacketGenerator", "Tools\PacketGenerator\PacketGenerator.csproj", "{F98719CA-82B8-47C4-A49F-208620392057}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{833F9688-3292-46E4-8644-84FA50C89642}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{833F9688-3292-46E4-8644-84FA50C89642}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{833F9688-3292-46E4-8644-84FA50C89642}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F98719CA-82B8-47C4-A49F-208620392057}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F98719CA-82B8-47C4-A49F-208620392057}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F98719CA-82B8-47C4-A49F-208620392057}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F98719CA-82B8-47C4-A49F-208620392057}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -48,6 +54,7 @@ Global
 		{870DF9E9-683A-4961-8E82-CC056E6B30F1} = {785DB7D1-B498-4A23-8FF8-8F7CF09DC05C}
 		{84C20F71-723D-474C-B907-407389D7767C} = {3382F8A2-8356-45F9-849C-DC87F14563B7}
 		{833F9688-3292-46E4-8644-84FA50C89642} = {3382F8A2-8356-45F9-849C-DC87F14563B7}
+		{F98719CA-82B8-47C4-A49F-208620392057} = {3924E509-0853-46F3-94C8-C272EA0C1E4E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A455B4AD-D78B-4005-A565-C2BF0F9DDA3E}

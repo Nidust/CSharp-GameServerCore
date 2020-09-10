@@ -1,7 +1,6 @@
-﻿using Core.Network.Packet;
-using System;
+﻿using System;
 
-namespace Core.Server.Session
+namespace Core.Network.Packet
 {
     public sealed class PacketReceiver
     {

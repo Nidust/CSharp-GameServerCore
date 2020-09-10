@@ -1,9 +1,8 @@
-﻿using Core.Network.Packet;
-using Core.Network.Socket;
+﻿using Core.Network.Socket;
 using System;
 using System.Collections.Generic;
 
-namespace Core.Server.Session
+namespace Core.Network.Packet
 {
     public sealed class PacketSender
     {

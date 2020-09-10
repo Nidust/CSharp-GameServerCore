@@ -45,8 +45,6 @@
   <ItemGroup>
     <Compile Include="Network\Listener.cs" />
     <Compile Include="Session\ISessionManager.cs" />
-    <Compile Include="Session\PacketReceiver.cs" />
-    <Compile Include="Session\PacketSender.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Session\ISession.cs" />
     <Compile Include="Session\Session.cs" />
