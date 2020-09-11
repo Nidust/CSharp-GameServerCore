@@ -5,7 +5,7 @@ using System.IO;
 
 namespace Core.Network.Packet
 {
-    public sealed class PacketSender
+    public sealed class PacketSender : IDisposable
     {
         #region Properties
         private Queue<IPacket> mSendList;
@@ -14,7 +14,7 @@ namespace Core.Network.Packet
         private UInt16 mSendBufferSize;
         private UInt16 mSentBufferSize;
 
-        private BinaryWriter mWriter;
+        private MemoryStream mStream;
         #endregion
 
         #region Methods
@@ -58,6 +58,7 @@ namespace Core.Network.Packet
         private void SendComplete(ClientSocket socket)
         {
             mSendBuffer = null;
+            Dispose();
 
             if (IsRemainPacketToSend())
             {
@@ -76,21 +77,24 @@ namespace Core.Network.Packet
             mSendBufferSize = (UInt16)mSendBuffer.Length;
             mSentBufferSize = 0;
 
+            mStream = new MemoryStream(mSendBuffer);
+
             SendBuffer(socket);
         }
 
         private void SendBuffer(ClientSocket socket)
         {
-            UInt16 remainBufferSize = (UInt16)(mSendBufferSize - mSentBufferSize);
+            mStream.Seek(mSentBufferSize, SeekOrigin.Begin);
+
+            Int32 remainBufferSize = mSendBufferSize - mSentBufferSize;
             if (remainBufferSize > socket.MaxSendBufferSize)
             {
-                remainBufferSize = (UInt16)socket.MaxSendBufferSize;
+                remainBufferSize = socket.MaxSendBufferSize;
             }
 
-            Byte[] buffer = new Byte[remainBufferSize];
-            Buffer.BlockCopy(mSendBuffer, mSentBufferSize, buffer, 0, remainBufferSize);
+            ArraySegment<Byte> sendBuffer = new ArraySegment<Byte>(mStream.GetBuffer(), (Int32)mStream.Position, remainBufferSize);
 
-            socket.Send(buffer);
+            socket.Send(sendBuffer.Array);
         }
 
         private IPacket GetPacketToSend()
@@ -114,6 +118,16 @@ namespace Core.Network.Packet
         private Boolean IsSendComplete()
         {
             return mSentBufferSize == mSendBufferSize;
+        }
+
+        public void Dispose()
+        {
+            if (mStream == null)
+            {
+                return;
+            }
+
+            mStream.Dispose();
         }
         #endregion
     }

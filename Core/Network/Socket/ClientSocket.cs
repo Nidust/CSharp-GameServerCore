@@ -149,14 +149,6 @@ namespace Core.Network.Socket
                 ErrorOccured(new AsyncSocketErrorEventArgs(e));
             }
         }
-
-        public bool IsClosed()
-        {
-            lock (mCalledClosedLock)
-            {
-                return mCalledClosed;
-            }
-        }
         #endregion
 
         #region Private

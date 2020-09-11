@@ -68,10 +68,7 @@ namespace Core.Server.Session
 
         public void Disconnect()
         {
-            lock (mLock)
-            {
-                mSocket.Close();
-            }
+            Dispose();
         }
         #endregion
 
@@ -115,16 +112,32 @@ namespace Core.Server.Session
 
         private void OnDisconnectEvent(object sender)
         {
+            OnDisconnect();
+
             if (mManager != null)
                 mManager.DestroySession(this);
-
-            OnDisconnect();
         }
 
         private void OnError(object sender, AsyncSocketErrorEventArgs e)
         {
             Console.Error.WriteLine(e.Exception);
             Disconnect();
+        }
+
+        public void Dispose()
+        {
+            if (mLock == null)
+            {
+                return;
+            }
+
+            lock (mLock)
+            {
+                mSocket.Close();
+                mSender.Dispose();
+            }
+
+            mLock = null;
         }
         #endregion
     }

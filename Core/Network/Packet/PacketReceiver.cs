@@ -54,9 +54,14 @@ namespace Core.Network.Packet
         private bool ReceiveComeplete(out IPacket packet)
         {
             packet = PacketSerializer.Deserialize(mBuffer);
+            if (packet == null)
+            {
+                throw new NullReferenceException($"Packet Receive Error: packet is null");
+            }
+
             mBuffer = null;
 
-            return packet == null;
+            return true;
         }
 
         private Boolean IsReceivingPacket()

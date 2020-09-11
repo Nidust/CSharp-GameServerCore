@@ -50,6 +50,7 @@ namespace Core.Server.Session
         {
             lock (mLock)
             {
+                session.Dispose();
                 mSessions.Remove(session);
             }
         }
