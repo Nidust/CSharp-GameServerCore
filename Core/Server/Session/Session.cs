@@ -1,10 +1,11 @@
 ﻿using Core.Network.Packet;
 using Core.Network.Socket;
+using Core.Server.Lock;
 using System;
 
 namespace Core.Server.Session
 {
-    public abstract class Session : ISession
+    public abstract class Session : Locker, ISession
     {
         #region Properties
         private ISessionManager mManager;
@@ -12,9 +13,6 @@ namespace Core.Server.Session
 
         private PacketSender mSender;
         private PacketReceiver mReceiver;
-
-        // TODO: ReaderWriterLock 구현
-        protected Object mLock;
         #endregion
 
         #region Abstract Methods
@@ -28,7 +26,6 @@ namespace Core.Server.Session
         private Session()
         {
             mManager = null;
-            mLock = new Object();
 
             mSender = new PacketSender();
             mReceiver = new PacketReceiver();
@@ -60,10 +57,11 @@ namespace Core.Server.Session
 
         public virtual void Send(IPacket packet)
         {
-            lock (mLock)
+            WriteLock();
             {
                 mSender.Send(mSocket, packet);
             }
+            WriteUnlock();
         }
 
         public void Disconnect()
@@ -75,7 +73,7 @@ namespace Core.Server.Session
         #region Network Events
         private void OnSendEvent(object sender, AsyncSocketSendEventArgs e)
         {
-            lock (mLock)
+            WriteLock();
             {
                 Boolean sendComplete = mSender.Sending(mSocket, (UInt16)e.BytesWritten);
 
@@ -84,6 +82,7 @@ namespace Core.Server.Session
                     return;
                 }
             }
+            WriteUnlock();
 
             OnSend();
         }
@@ -92,7 +91,7 @@ namespace Core.Server.Session
         {
             IPacket receivePacket;
 
-            lock (mLock)
+            WriteLock();
             {
                 Boolean receiveComeplete = mReceiver.Receiving(e.ReceiveBuffer, e.ReceiveBytes, out receivePacket);
 
@@ -101,6 +100,7 @@ namespace Core.Server.Session
                     return;
                 }
             }
+            WriteUnlock();
 
             OnPacket(receivePacket);
         }
@@ -126,18 +126,12 @@ namespace Core.Server.Session
 
         public void Dispose()
         {
-            if (mLock == null)
-            {
-                return;
-            }
-
-            lock (mLock)
+            WriteLock();
             {
                 mSocket.Close();
                 mSender.Dispose();
             }
-
-            mLock = null;
+            WriteUnlock();
         }
         #endregion
     }
