@@ -1,6 +1,7 @@
 ﻿using Core.Network.Socket;
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Core.Network.Packet
 {
@@ -12,6 +13,8 @@ namespace Core.Network.Packet
         private Byte[] mSendBuffer;
         private UInt16 mSendBufferSize;
         private UInt16 mSentBufferSize;
+
+        private BinaryWriter mWriter;
         #endregion
 
         #region Methods

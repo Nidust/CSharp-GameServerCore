@@ -8,7 +8,6 @@ namespace Core.Network.Packet
         private Byte[] mBuffer;
         private Int32 mLength;
 
-        private UInt16 mPacketId;
         private UInt16 mPacketSize;
 
         private static UInt16 PacketHeaderSize = sizeof(UInt16) + sizeof(UInt16);
@@ -24,8 +23,7 @@ namespace Core.Network.Packet
 
             if (IsReceivingPacket() == false)
             {
-                mPacketId = BitConverter.ToUInt16(buffer, 0);
-                mPacketSize = BitConverter.ToUInt16(buffer, sizeof(UInt16));
+                mPacketSize = BitConverter.ToUInt16(buffer, 0);
 
                 mBuffer = new Byte[mPacketSize];
                 mLength = 0;
@@ -37,7 +35,7 @@ namespace Core.Network.Packet
             // 패킷 사이즈가 넘어갔을 떄
             if (mLength + length > mPacketSize)
             {
-                throw new ArgumentOutOfRangeException($"Packet Receive Error (PacketSize={mPacketSize}, PacketType={mPacketId})");
+                throw new ArgumentOutOfRangeException($"Packet Receive Error (PacketSize={mPacketSize})");
             }
 
             Buffer.BlockCopy(buffer, offSet, mBuffer, mLength, length);
