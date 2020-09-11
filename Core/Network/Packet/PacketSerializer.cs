@@ -81,7 +81,7 @@ namespace Core.Network.Packet
             using (BinaryWriter writer = new BinaryWriter(stream))
             {
                 writer.Write((UInt16)0); // packetSize
-                writer.Write(packetEnum); // packetId
+                writer.Write((UInt16)packetEnum); // packetId
 
                 PacketWriters[packetEnum].Invoke(writer, packet);
 
