@@ -6,7 +6,12 @@ using System.Linq;
 namespace Core.Network.Packet
 {
     // TODO: 패킷 코드 자동 생성
-    /* 패킷 코드 예시
+    /*
+    public partial class PacketType
+    {
+        public static PacketType SamplePacket = new PacketType(1, "SamplePacket");
+    }
+
     public class SamplePacket : IPacket
     {
         public Int32 Value { get; private set; }
@@ -40,7 +45,7 @@ namespace Core.Network.Packet
         #region Methods
         static PacketSerializer()
         {
-            PacketEnums = PacketType.GetAll<PacketType>().ToDictionary(key => key.Name, value => value.Id);
+            PacketEnums = Enumeration.GetAll<PacketType>().ToDictionary(key => key.Name, value => value.Id);
 
             Type[] packetTypes = typeof(IPacket)
                 .Assembly

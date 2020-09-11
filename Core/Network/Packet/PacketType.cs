@@ -1,6 +1,6 @@
 ﻿namespace Core.Network.Packet
 {
-    public class PacketType : Enumeration
+    public partial class PacketType : Enumeration
     {
         // public static readonly PacketType Example = new PacketType(1, "Example");
 
