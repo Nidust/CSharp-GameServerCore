@@ -16,11 +16,15 @@ namespace Core.Server.Lock
             mLock = new ReaderWriterLock();
         }
 
-        public void ReadLock()
+        public void ReadLock(Action action)
         {
             try
             {
                 mLock.AcquireReaderLock(LockTimeout.Milliseconds);
+
+                action();
+
+                mLock.ReleaseReaderLock();
             }
             catch (ApplicationException)
             {
@@ -28,12 +32,7 @@ namespace Core.Server.Lock
             }
         }
 
-        public void ReadUnlock()
-        {
-            mLock.ReleaseReaderLock();
-        }
-
-        public void WriteLock()
+        public void WriteLock(Action action)
         {
             try
             {
@@ -41,6 +40,10 @@ namespace Core.Server.Lock
                     throw new Exception("WriterLock Fail.. ReaderLockHeld");
 
                 mLock.AcquireWriterLock(LockTimeout);
+                
+                action();
+
+                mLock.ReleaseWriterLock();
             }
             catch (ApplicationException)
             {
@@ -50,11 +53,6 @@ namespace Core.Server.Lock
             {
                 Environment.FailFast(e.Message);
             }
-        }
-
-        public void WriteUnlock()
-        {
-            mLock.ReleaseWriterLock();
         }
         #endregion
     }
