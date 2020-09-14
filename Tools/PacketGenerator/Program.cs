@@ -14,10 +14,13 @@ namespace PacketGenerator
                 Console.WriteLine($"Output Directory: {GeneratorConfig.OutputDirecotry}");
                 Console.WriteLine($"Working Directory: {GeneratorConfig.WorkingDirectory}");
                 Console.WriteLine($"Starting Packet Code Generator...");
+
+                PacketCodeGenerator generator = new PacketCodeGenerator();
+                generator.Generate();
             }
             catch (Exception e)
             {
-                Console.Error.WriteLine(e.Message);
+                Console.Error.WriteLine(e);
             }
         }
     }
