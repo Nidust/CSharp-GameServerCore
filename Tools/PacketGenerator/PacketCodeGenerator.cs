@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Linq;
 
 namespace PacketGenerator
 {
     public sealed class PacketCodeGenerator : CodeGenerator
     {
+        #region Methods
         public override void Generate()
         {
             XDocument document = XDocument.Load(GeneratorConfig.DefinitionPath);
@@ -15,10 +17,13 @@ namespace PacketGenerator
 
             Flush(GeneratorConfig.OutputDirecotry);
         }
+        #endregion
 
+        #region Private
         private void CreateUsing()
         {
             WriteLine("using System;");
+            WriteLine("using System.Collections.Generic;");
             WriteLine();
         }
 
@@ -28,16 +33,33 @@ namespace PacketGenerator
             WriteLine("{");
             PushIndent();
             {
-                GeneratePacketType(document.Descendants("Group"));
+                XElement[] packets = document
+                    .Descendants("Packet")
+                    .ToArray();
+
+                GeneratePacketType(packets);
+
                 WriteLine();
 
-                GeneratePacketClass(document.Descendants("Packet"));
+                foreach (XElement nestedClass in document.Descendants("NestedClass"))
+                {
+                    GenerateNestedClass(nestedClass);
+                    WriteLine();
+                }
+
+                WriteLine();
+
+                foreach (XElement packet in packets)
+                {
+                    GeneratePacketClass(packet);
+                    WriteLine();
+                }
             }
             PopIndent();
             WriteLine("}");
         }
 
-        private void GeneratePacketType(IEnumerable<XElement> groups)
+        private void GeneratePacketType(IEnumerable<XElement> packets)
         {
             WriteLine($"public partial class PacketType");
             WriteLine("{");
@@ -45,31 +67,54 @@ namespace PacketGenerator
             {
                 int currentIndex = 0;
 
-                foreach (XElement group in groups)
+                foreach (XElement packet in packets)
                 {
-                    if (group.Attribute("startEnumIndex") == null)
-                        throw new ArgumentNullException($"{group.Name} group startEnumIndex attribute is null");
-
-                    currentIndex = Int32.Parse(group.Attribute("startEnumIndex").Value);
-
-                    foreach (XElement packet in group.Descendants("Packet"))
-                    {
-                        String packetName = packet.Attribute("name")?.Value ?? String.Empty;
-                        if (String.IsNullOrEmpty(packetName))
-                            throw new ArgumentNullException($"{group.Name} group Packet name attribtue is null");
-
-                        WriteLine($"public static PacketType {packetName} = new PacketType({currentIndex}, {packetName});");
-                        ++currentIndex;
-                    }
+                    WriteLine($"public static PacketType {packet.Name} = new PacketType({currentIndex}, {packet.Name});");
+                    ++currentIndex;
                 }
             }
             PopIndent();
             WriteLine("}");
         }
 
-        private void GeneratePacketClass(IEnumerable<XElement> packets)
+        private void GenerateNestedClass(XElement nestedClass)
+        {
+            WriteLine($"public class {nestedClass.Name}");
+            WriteLine("{");
+            PushIndent();
+            {
+                foreach (XElement element in nestedClass.Elements())
+                {
+                    Type packetType = PacketType.Parse(element.Name.ToString());
+
+                    WriteLine($"public {packetType.Name} {{ get; set; }}");
+                }
+            }
+            PopIndent();
+            WriteLine("}");
+        }
+
+        private void GeneratePacketClass(XElement packet)
+        {
+            WriteLine($"public class {packet.Name}");
+            WriteLine("{");
+            PushIndent();
+            {
+                foreach (XElement element in packet.Elements())
+                {
+                    Type packetType = PacketType.Parse(element.Name.ToString());
+
+                    WriteLine($"public {packetType.Name} {element.Attribute("name").Value} {{ get; set; }}");
+                }
+            }
+            PopIndent();
+            WriteLine("}");
+        }
+
+        private void GenerateSerializeMethod()
         {
 
         }
+        #endregion
     }
 }

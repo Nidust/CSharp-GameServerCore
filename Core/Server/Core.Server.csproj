@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Lock\Locker.cs" />
     <Compile Include="Network\Listener.cs" />
     <Compile Include="Session\ISessionManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -56,5 +57,6 @@
       <Name>Core.Network</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
