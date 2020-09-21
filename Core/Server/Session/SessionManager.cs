@@ -16,7 +16,7 @@ namespace Core.Server.Session
         #endregion
 
         #region Abstract Methods
-        protected abstract Session CreateSession(ISessionManager manager, ClientSocket connection);
+        protected abstract Session CreateSession(ISessionManager manager, NetworkSocket connection);
         #endregion
 
         #region Methods

@@ -23,7 +23,7 @@ namespace Core.Network.Packet
             mSendList = new Queue<IPacket>();
         }
 
-        public void Send(ClientSocket socket, IPacket packet)
+        public void Send(NetworkSocket socket, IPacket packet)
         {
             mSendList.Enqueue(packet);
 
@@ -33,7 +33,7 @@ namespace Core.Network.Packet
             }
         }
 
-        public bool Sending(ClientSocket socket, UInt16 sendBytes)
+        public bool Sending(NetworkSocket socket, UInt16 sendBytes)
         {
             // 보내야 하는 사이즈를 넘어갔을 경우
             if (mSentBufferSize + sendBytes > mSendBufferSize)
@@ -55,7 +55,7 @@ namespace Core.Network.Packet
         #endregion
 
         #region Private
-        private void SendComplete(ClientSocket socket)
+        private void SendComplete(NetworkSocket socket)
         {
             mSendBuffer = null;
             Dispose();
@@ -66,7 +66,7 @@ namespace Core.Network.Packet
             }
         }
 
-        private void SendPacket(ClientSocket socket, IPacket sendPacket)
+        private void SendPacket(NetworkSocket socket, IPacket sendPacket)
         {
             if (sendPacket == null)
             {
@@ -82,7 +82,7 @@ namespace Core.Network.Packet
             SendBuffer(socket);
         }
 
-        private void SendBuffer(ClientSocket socket)
+        private void SendBuffer(NetworkSocket socket)
         {
             mStream.Seek(mSentBufferSize, SeekOrigin.Begin);
 

@@ -2,7 +2,7 @@
 
 namespace Core.Network.Socket
 {
-    public interface IClientSocket
+    public interface INetworkSocket
     {
         bool Send(byte[] buffer, bool blocking = false);
         void Close(SocketShutdown shutdownOption = SocketShutdown.Both);

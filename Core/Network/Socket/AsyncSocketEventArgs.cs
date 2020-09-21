@@ -18,9 +18,9 @@ namespace Core.Network.Socket
 
     public class AsyncSocketAcceptEventArgs : AsyncSocketEventArgs
     {
-        public ClientSocket Connection { get; }
+        public NetworkSocket Connection { get; }
 
-        public AsyncSocketAcceptEventArgs(ClientSocket connection)
+        public AsyncSocketAcceptEventArgs(NetworkSocket connection)
         {
             Connection = connection;
         }

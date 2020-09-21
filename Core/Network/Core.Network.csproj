@@ -53,8 +53,9 @@
     <Compile Include="Socket\AsyncIOContext.cs" />
     <Compile Include="Socket\AsyncSocketEventArgs.cs" />
     <Compile Include="Socket\AsyncSocketEventDispatcher.cs" />
-    <Compile Include="Socket\ClientSocket.cs" />
-    <Compile Include="Socket\IClientSocket.cs" />
+    <Compile Include="Socket\NetworkConnectionType.cs" />
+    <Compile Include="Socket\NetworkSocket.cs" />
+    <Compile Include="Socket\INetworkSocket.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

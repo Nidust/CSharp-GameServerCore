@@ -73,7 +73,7 @@ namespace Core.Server.Network
                 Socket listener = (Socket)ar.AsyncState;
                 Socket connection = listener.EndAccept(ar);
 
-                ClientSocket newConnection = new ClientSocket(connection, 65535, 65535);
+                NetworkSocket newConnection = new NetworkSocket(connection, 65535, 65535);
                 newConnection.Receive();
 
                 Accepted(new AsyncSocketAcceptEventArgs(newConnection));

@@ -2,6 +2,7 @@
 using Core.Network.Socket;
 using Core.Server.Lock;
 using System;
+using System.ComponentModel;
 
 namespace Core.Server.Session
 {
@@ -9,7 +10,7 @@ namespace Core.Server.Session
     {
         #region Properties
         private ISessionManager mManager;
-        protected ClientSocket mSocket;
+        protected NetworkSocket mSocket;
 
         private PacketSender mSender;
         private PacketReceiver mReceiver;
@@ -31,10 +32,10 @@ namespace Core.Server.Session
             mReceiver = new PacketReceiver();
         }
 
-        public Session(Int32 receiveBufferSize, Int32 sendBufferSize)
+        public Session(Int32 receiveBufferSize, Int32 sendBufferSize, NetworkConnectionType connectionType)
             : this()
         {
-            mSocket = new ClientSocket(receiveBufferSize, sendBufferSize);
+            mSocket = new NetworkSocket(receiveBufferSize, sendBufferSize, connectionType);
             mSocket.OnConnect += new AsyncSocketConnectEventHandler(OnConnectEvent);
             mSocket.OnDisconnect += new AsyncSocketDisconnectEventHandler(OnDisconnectEvent);
             mSocket.OnError += new AsyncSocketErrorEventHandler(OnError);
@@ -42,7 +43,7 @@ namespace Core.Server.Session
             mSocket.OnReceive += new AsyncSocketReceiveEventHandler(OnReceiveEvent);
         }
 
-        public Session(ISessionManager manager, ClientSocket socket)
+        public Session(ISessionManager manager, NetworkSocket socket)
             : this()
         {
             mManager = manager;
@@ -61,11 +62,6 @@ namespace Core.Server.Session
             { 
                 mSender.Send(mSocket, packet); 
             });
-        }
-
-        public void Disconnect()
-        {
-            Dispose();
         }
         #endregion
 
@@ -117,8 +113,15 @@ namespace Core.Server.Session
 
         private void OnError(object sender, AsyncSocketErrorEventArgs e)
         {
+            Win32Exception winException = e.Exception as Win32Exception;
+            switch (winException.ErrorCode)
+            {
+                case 10057:
+                case 10061:
+                    return;
+            }
+
             Console.Error.WriteLine(e.Exception);
-            Disconnect();
         }
 
         public void Dispose()

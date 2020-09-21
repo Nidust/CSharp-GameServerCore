@@ -13,7 +13,7 @@ namespace AccountServer.Session.GameServerSession
             Console.WriteLine($"Create Game Server Session Manager...");
         }
 
-        protected override NetworkSession CreateSession(ISessionManager manager, ClientSocket connection)
+        protected override NetworkSession CreateSession(ISessionManager manager, NetworkSocket connection)
         {
             return new GameServerSession(manager, connection);
         }

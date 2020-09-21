@@ -8,7 +8,7 @@ namespace AccountServer.Session.GameServerSession
 {
     public class GameServerSession : NetworkSession
     {
-        public GameServerSession(ISessionManager manager, ClientSocket socket) 
+        public GameServerSession(ISessionManager manager, NetworkSocket socket) 
             : base(manager, socket)
         {
         }

@@ -1,38 +1,45 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Net;
 using System.Net.Sockets;
-using NetworkSocket = System.Net.Sockets.Socket;
+using SystemSocket = System.Net.Sockets.Socket;
 
 namespace Core.Network.Socket
 {
-    public class ClientSocket : AsyncClientSocketEventDispatcher, IClientSocket
+    public class NetworkSocket : AsyncClientSocketEventDispatcher, INetworkSocket
     {
         #region Properties
-        private NetworkSocket mConnection;
+        private SystemSocket mConnection;
+        private IPAddress mAddress;
+        private Int32 mPort;
 
         private Object mCalledClosedLock;
         private Boolean mCalledClosed;
+
+        private NetworkConnectionType mConnectionType;
 
         public Int32 MaxReceiveBufferSize { get; }
         public Int32 MaxSendBufferSize { get; }
         #endregion
 
         #region Methods
-        public ClientSocket()
+        public NetworkSocket(NetworkConnectionType type = NetworkConnectionType.Normal)
         {
             mCalledClosedLock = new Object();
             mCalledClosed = false;
+
+            mConnectionType = type;
         }
 
-        public ClientSocket(int maxReceiveBufferSize, int maxSendBufferSize)
-            : this()
+        public NetworkSocket(int maxReceiveBufferSize, int maxSendBufferSize, NetworkConnectionType type = NetworkConnectionType.Normal)
+            : this(type)
         {
             MaxReceiveBufferSize = maxReceiveBufferSize;
             MaxSendBufferSize = maxSendBufferSize;
         }
 
-        public ClientSocket(NetworkSocket connection, int maxReceiveBufferSize, int maxSendBufferSize)
-            : this(maxReceiveBufferSize, maxSendBufferSize)
+        public NetworkSocket(SystemSocket connection, int maxReceiveBufferSize, int maxSendBufferSize, NetworkConnectionType type = NetworkConnectionType.Normal)
+            : this(maxReceiveBufferSize, maxSendBufferSize, type)
         {
             mConnection = connection;
             mConnection.ReceiveBufferSize = MaxReceiveBufferSize;
@@ -43,10 +50,13 @@ namespace Core.Network.Socket
         {
             try
             {
-                IPAddress[] ips = Dns.GetHostAddresses(hostAddress);
-                IPEndPoint remoteEndPoint = new IPEndPoint(ips[0], port);
+                mAddress = Dns.GetHostAddresses(hostAddress)[0];
+                mPort = port;
+                EndPoint remoteEndPoint = new IPEndPoint(mAddress, mPort);
 
-                mConnection = new NetworkSocket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                mConnection = new SystemSocket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                mConnection.ReceiveTimeout = 60 * 1000;
+                mConnection.SendTimeout = 60 * 1000;
                 mConnection.BeginConnect(remoteEndPoint, new AsyncCallback(ConnectResultCallBack), new AsyncIOConnectContext(mConnection));
 
                 return true;
@@ -54,6 +64,8 @@ namespace Core.Network.Socket
             catch (Exception e)
             {
                 ErrorOccured(new AsyncSocketErrorEventArgs(e));
+
+                TryReconnect();
                 return false;
             }
         }
@@ -79,6 +91,10 @@ namespace Core.Network.Socket
             {
                 ErrorOccured(new AsyncSocketErrorEventArgs(e));
             }
+            finally
+            {
+                TryReconnect();
+            }
         }
 
         public void Close(SocketShutdown shutdownOption = SocketShutdown.Both)
@@ -93,6 +109,8 @@ namespace Core.Network.Socket
             catch (Exception e)
             {
                 ErrorOccured(new AsyncSocketErrorEventArgs(e));
+
+                TryReconnect();
             }
         }
 
@@ -168,6 +186,8 @@ namespace Core.Network.Socket
             catch (Exception e)
             {
                 ErrorOccured(new AsyncSocketErrorEventArgs(e));
+
+                TryReconnect();
             }
         }
 
@@ -189,6 +209,22 @@ namespace Core.Network.Socket
             {
                 ErrorOccured(new AsyncSocketErrorEventArgs(e));
             }
+            finally
+            {
+                TryReconnect();
+            }
+        }
+
+        private void TryReconnect()
+        {
+            if (mConnectionType != NetworkConnectionType.TryReconnect)
+            {
+                return;
+            }
+
+            mConnection = null;
+
+            Connect(mAddress.ToString(), mPort);
         }
 
         private void ReceiveResultCallback(IAsyncResult ar)
@@ -257,6 +293,11 @@ namespace Core.Network.Socket
 
         protected override void ErrorOccured(AsyncSocketErrorEventArgs args)
         {
+            if (mConnection.Connected)
+            {
+                Close();
+            }
+
             base.ErrorOccured(args);
         }
         #endregion
