@@ -58,17 +58,18 @@ namespace Core.Server.Session
 
         public virtual void Send(IPacket packet)
         {
-            WriteLock(() => 
-            { 
-                mSender.Send(mSocket, packet); 
-            });
+            WriteLock();
+            {
+                mSender.Send(mSocket, packet);
+            }
+            WriteUnlock();
         }
         #endregion
 
         #region Network Events
         private void OnSendEvent(object sender, AsyncSocketSendEventArgs e)
         {
-            WriteLock(() =>
+            WriteLock();
             {
                 Boolean sendComplete = mSender.Sending(mSocket, (UInt16)e.BytesWritten);
 
@@ -76,7 +77,8 @@ namespace Core.Server.Session
                 {
                     return;
                 }
-            });
+            }
+            WriteUnlock();
 
             OnSend();
         }
@@ -85,7 +87,7 @@ namespace Core.Server.Session
         {
             IPacket receivePacket = null;
 
-            WriteLock(() =>
+            WriteLock();
             {
                 Boolean receiveComeplete = mReceiver.Receiving(e.ReceiveBuffer, e.ReceiveBytes, out receivePacket);
 
@@ -93,7 +95,8 @@ namespace Core.Server.Session
                 {
                     return;
                 }
-            });
+            }
+            WriteUnlock();
 
             OnPacket(receivePacket);
         }
@@ -126,11 +129,12 @@ namespace Core.Server.Session
 
         public void Dispose()
         {
-            WriteLock(() =>
+            WriteLock();
             {
                 mSocket.Close();
                 mSender.Dispose();
-            });
+            }
+            WriteUnlock();
         }
         #endregion
     }
