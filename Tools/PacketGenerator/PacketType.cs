@@ -4,6 +4,8 @@ namespace PacketGenerator
 {
     public static class PacketType
     {
+        private static char[] Separator = new char[] { ':' };
+
         public static Type Parse(String typeName)
         {
             Type type = Type.GetType(typeName);
@@ -29,9 +31,9 @@ namespace PacketGenerator
                 default:
                     if (typeName.Contains("List"))
                     {
-                        String name = typeName.Replace("List", "");
+                        String name = typeName.Split(Separator, StringSplitOptions.RemoveEmptyEntries)[1];
 
-                        return Type.GetType($"List<{name}>");
+                        return Type.GetType($"{name}[]");
                     }
 
                     throw new ArgumentException($"Not found Type: {typeName}");
