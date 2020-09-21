@@ -150,6 +150,8 @@ namespace Core.Network.Socket
             catch (Exception e)
             {
                 ErrorOccured(new AsyncSocketErrorEventArgs(e));
+
+                TryReconnect();
                 return false;
             }
         }
@@ -165,6 +167,8 @@ namespace Core.Network.Socket
             catch (Exception e)
             {
                 ErrorOccured(new AsyncSocketErrorEventArgs(e));
+
+                TryReconnect();
             }
         }
         #endregion
@@ -254,6 +258,8 @@ namespace Core.Network.Socket
             catch (Exception e)
             {
                 ErrorOccured(new AsyncSocketErrorEventArgs(e));
+
+                TryReconnect();
             }
         }
 
@@ -276,6 +282,8 @@ namespace Core.Network.Socket
             catch (Exception e)
             {
                 ErrorOccured(new AsyncSocketErrorEventArgs(e));
+
+                TryReconnect();
             }
         }
 
