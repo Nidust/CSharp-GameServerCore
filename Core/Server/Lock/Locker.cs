@@ -32,11 +32,18 @@ namespace Core.Server.Lock
         {
             try
             {
+                if (mLock.IsWriterLockHeld)
+                    throw new Exception("ReadUnlock Fail.. WriterLockHeld");
+
                 mLock.ReleaseReaderLock();
             }
             catch (ApplicationException)
             {
                 Environment.FailFast("ReadLock Timeout");
+            }
+            catch (Exception e)
+            {
+                Environment.FailFast(e.Message);
             }
         }
 
@@ -64,7 +71,7 @@ namespace Core.Server.Lock
             try
             {
                 if (mLock.IsReaderLockHeld)
-                    throw new Exception("WriterLock Fail.. ReaderLockHeld");
+                    throw new Exception("WriterUnlock Fail.. ReaderLockHeld");
 
                 mLock.ReleaseWriterLock();
             }
