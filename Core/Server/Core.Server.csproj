@@ -92,6 +92,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Database\DatabaseContext.cs" />
+    <Compile Include="Database\DatabaseContextPool.cs" />
     <Compile Include="Lock\Locker.cs" />
     <Compile Include="Network\Listener.cs" />
     <Compile Include="Session\ISessionManager.cs" />
