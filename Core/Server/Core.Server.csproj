@@ -93,7 +93,10 @@
   <ItemGroup>
     <Compile Include="Database\DatabaseContext.cs" />
     <Compile Include="Database\DatabaseContextPool.cs" />
+    <Compile Include="Job\IDbJob.cs" />
     <Compile Include="Job\IJob.cs" />
+    <Compile Include="Job\TimerJob.cs" />
+    <Compile Include="Job\JobExecuter.cs" />
     <Compile Include="Lock\Locker.cs" />
     <Compile Include="Network\Listener.cs" />
     <Compile Include="Session\ISessionManager.cs" />
@@ -101,6 +104,10 @@
     <Compile Include="Session\ISession.cs" />
     <Compile Include="Session\Session.cs" />
     <Compile Include="Session\SessionManager.cs" />
+    <Compile Include="Threaded\IRunnable.cs" />
+    <Compile Include="Threaded\RunnableObject.cs" />
+    <Compile Include="Threaded\ThreadCoordinator.cs" />
+    <Compile Include="Threaded\WorkerThread.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Network\Core.Network.csproj">
