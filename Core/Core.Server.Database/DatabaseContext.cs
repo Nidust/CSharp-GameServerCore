@@ -43,7 +43,7 @@ namespace Core.Server.Database
             }
 
             mCommand.CommandText = query;
-            
+
             mCommand.Parameters.Clear();
             mCommand.Parameters.AddRange(parameters);
 
