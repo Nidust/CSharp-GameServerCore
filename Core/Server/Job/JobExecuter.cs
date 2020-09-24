@@ -7,7 +7,8 @@ namespace Core.Server.Job
     {
         #region Properties
         private Stack<IJob> mJobs;
-
+        private Stack<IDbJob> mDbJobs;
+        
         private List<TimerJob> mTimerJobs;
         private List<TimerJob> mTimerJobsToRemove;
         #endregion
@@ -16,6 +17,7 @@ namespace Core.Server.Job
         public JobExecuter()
         {
             mJobs = new Stack<IJob>();
+            mDbJobs = new Stack<IDbJob>();
 
             mTimerJobs = new List<TimerJob>();
             mTimerJobsToRemove = new List<TimerJob>();
@@ -31,6 +33,19 @@ namespace Core.Server.Job
                 }
 
                 mJobs.Clear();
+            }
+        }
+
+        public void DoDbJob()
+        {
+            lock (mDbJobs)
+            {
+                foreach (IDbJob job in mDbJobs)
+                {
+                    job.Do();
+                }
+
+                mDbJobs.Clear();
             }
         }
 
@@ -57,7 +72,7 @@ namespace Core.Server.Job
             }
         }
 
-        public void Push(IJob job)
+        public void PushJob(IJob job)
         {
             lock (mJobs)
             {
@@ -65,7 +80,15 @@ namespace Core.Server.Job
             }
         }
 
-        public void Push(TimerJob timerJob)
+        public void PushDbJob(IDbJob job)
+        {
+            lock (mDbJobs)
+            {
+                mDbJobs.Push(job);
+            }
+        }
+
+        public void PushTimerJob(TimerJob timerJob)
         {
             lock (mTimerJobs)
             {

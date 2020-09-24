@@ -1,12 +1,16 @@
-﻿using System;
+﻿using Core.Server.Job;
+using System;
 
 namespace Core.Server.Threaded
 {
     public interface IRunnable : IDisposable
     {
+        void SetWorker(WorkerThread worker);
+
         void OnUpdate();
-        Int32 GetId();
-        void SetworkerThreadId(Int32 workerThreadId);
-        Int32 GetWorkerThreadId();
+
+        void PushJob(IJob job);
+        void PushDbJob(IDbJob job);
+        void PushTimerJob(TimerJob timerJob);
     }
 }

@@ -45,19 +45,24 @@ namespace Core.Server.Threaded
 
         public void PushJob(IJob job)
         {
-            mJobExecutor.Push(job);
+            mJobExecutor.PushJob(job);
         }
 
-        public void PushJob(TimerJob timerJob)
+        public void PushDbJob(IDbJob job)
         {
-            mJobExecutor.Push(timerJob);
+            mJobExecutor.PushDbJob(job);
+        }
+
+        public void PushTimerJob(TimerJob timerJob)
+        {
+            mJobExecutor.PushTimerJob(timerJob);
         }
 
         public void AddRunnable(IRunnable runnable)
         {
             lock (mRunnables)
             {
-                runnable.SetworkerThreadId(mThreadId);
+                runnable.SetWorker(this);
                 mRunnables.Add(runnable);
             }
         }
@@ -79,8 +84,12 @@ namespace Core.Server.Threaded
             {
                 OnUpdate();
 
+                mJobExecutor.DoDbJob();
+
                 mJobExecutor.Do();
                 mJobExecutor.DoTimer();
+
+                mJobExecutor.DoDbJob();
             }
         }
 
