@@ -5,6 +5,7 @@ namespace Core.Server.Threaded
 {
     public interface IRunnable : IDisposable
     {
+        Int32 GetId();
         void SetWorker(WorkerThread worker);
 
         void OnUpdate();

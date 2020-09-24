@@ -1,4 +1,6 @@
 ﻿using Core.Server.Job;
+using System;
+using System.Threading;
 
 namespace Core.Server.Threaded
 {
@@ -6,6 +8,8 @@ namespace Core.Server.Threaded
     {
         #region Properties
         private WorkerThread mWorker;
+
+        private static Int32 ObjectId;
         #endregion
 
         #region Abstarct Methods
@@ -13,6 +17,11 @@ namespace Core.Server.Threaded
         #endregion
 
         #region Methods
+        static RunnableObject()
+        {
+            ObjectId = 0;
+        }
+
         public void SetWorker(WorkerThread worker)
         {
             mWorker = worker;
@@ -36,6 +45,11 @@ namespace Core.Server.Threaded
         public virtual void Dispose()
         {
             mWorker = null;
+        }
+
+        public Int32 GetId()
+        {
+            return Interlocked.Increment(ref ObjectId);
         }
         #endregion
     }
