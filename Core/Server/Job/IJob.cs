@@ -1,4 +1,6 @@
-﻿namespace Core.Server.Job
+﻿using System;
+
+namespace Core.Server.Job
 {
     public interface IJob
     {
