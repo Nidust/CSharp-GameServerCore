@@ -7,7 +7,7 @@ namespace Core.Server.Threaded
     public abstract class RunnableObject : IRunnable
     {
         #region Properties
-        private WorkerThread mWorker;
+        private IWorkThread mWorker;
 
         private static Int32 ObjectId;
         #endregion
@@ -22,7 +22,7 @@ namespace Core.Server.Threaded
             ObjectId = 0;
         }
 
-        public void SetWorker(WorkerThread worker)
+        public void SetWorker(IWorkThread worker)
         {
             mWorker = worker;
         }

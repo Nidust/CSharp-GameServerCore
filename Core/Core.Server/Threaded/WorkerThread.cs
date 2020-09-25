@@ -5,7 +5,7 @@ using System.Threading;
 
 namespace Core.Server.Threaded
 {
-    public class WorkerThread
+    public class WorkerThread : IWorkThread
     {
         #region Properties
         private Thread mThread;
