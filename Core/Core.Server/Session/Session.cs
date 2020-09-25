@@ -1,4 +1,5 @@
-﻿using Core.Network.Packet;
+﻿using Core.Logger;
+using Core.Network.Packet;
 using Core.Network.Socket;
 using Core.Server.Lock;
 using System;
@@ -124,7 +125,7 @@ namespace Core.Server.Session
                     return;
             }
 
-            Console.Error.WriteLine(e.Exception);
+            Error.Log(e.Exception);
         }
 
         public void Dispose()

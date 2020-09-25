@@ -1,4 +1,5 @@
-﻿using Core.Network.Packet;
+﻿using Core.Logger;
+using Core.Network.Packet;
 using Core.Network.Socket;
 using Core.Server.Network;
 using System;
@@ -70,7 +71,7 @@ namespace Core.Server.Session
 
         private void OnErrorEvent(object sender, AsyncSocketErrorEventArgs e)
         {
-            Console.Error.WriteLine($"Accpet Error: {e}");
+            Error.Log(e.Exception);
         }
         #endregion
     }

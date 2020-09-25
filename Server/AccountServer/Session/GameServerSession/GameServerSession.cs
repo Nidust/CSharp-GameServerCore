@@ -1,4 +1,5 @@
-﻿using Core.Network.Packet;
+﻿using Core.Logger;
+using Core.Network.Packet;
 using Core.Network.Socket;
 using Core.Server.Session;
 using System;
@@ -15,22 +16,22 @@ namespace AccountServer.Session.GameServerSession
 
         protected override void OnConnect()
         {
-            Console.WriteLine($"Registered Game Server Session...");
+            Info.Log($"Registered Game Server Session...");
         }
 
         protected override void OnDisconnect()
         {
-            Console.WriteLine($"UnRegistered Game Server Session...");
+            Info.Log($"UnRegistered Game Server Session...");
         }
 
         protected override void OnPacket(IPacket packet)
         {
-            Console.WriteLine($"Ping Packet From Game Server Session");
+            Debug.Log($"Ping Packet From Game Server Session");
         }
 
         protected override void OnSend()
         {
-            Console.WriteLine($"Send Pong Packet To Game Server Session");
+            Debug.Log($"Send Pong Packet To Game Server Session");
         }
     }
 }

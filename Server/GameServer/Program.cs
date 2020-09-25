@@ -1,4 +1,6 @@
-﻿using GameServer.Session.AccountServer;
+﻿using Core.Logger;
+using GameServer.Session.AccountServer;
+using System;
 using System.Threading;
 
 namespace GameServer
@@ -9,12 +11,15 @@ namespace GameServer
 
         static void Main(string[] args)
         {
-            Thread.Sleep(1000);
-
+            Logger.Initialize(Environment.CurrentDirectory, "GameServer");
+            
             AccountServerSession accountSession = new AccountServerSession();
             accountSession.Connect("127.0.0.1", 5001);
 
+            Info.Log("--Server Ready");
+
             Terminated.WaitOne();
+            Logger.Uninitialize();
         }
     }
 }

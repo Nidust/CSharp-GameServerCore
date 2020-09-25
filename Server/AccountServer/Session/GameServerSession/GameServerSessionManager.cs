@@ -1,4 +1,5 @@
-﻿using Core.Network.Socket;
+﻿using Core.Logger;
+using Core.Network.Socket;
 using Core.Server.Session;
 using System;
 using NetworkSession = Core.Server.Session.Session;
@@ -10,7 +11,7 @@ namespace AccountServer.Session.GameServerSession
         public GameServerSessionManager() 
             : base()
         {
-            Console.WriteLine($"Create Game Server Session Manager...");
+            Info.Log($"Create Game Server Session Manager...");
         }
 
         protected override NetworkSession CreateSession(ISessionManager manager, NetworkSocket connection)
