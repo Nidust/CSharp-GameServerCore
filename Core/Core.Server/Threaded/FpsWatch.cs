@@ -24,6 +24,8 @@ namespace Core.Server.Threaded
         public FpsWatch()
         {
             mWatch = new Stopwatch();
+            mWatch.Start();
+
             mSampleTicks = new Queue<Int64>(MaximumSamplingTickCount);
 
             mPreviousTicks = mWatch.ElapsedTicks;

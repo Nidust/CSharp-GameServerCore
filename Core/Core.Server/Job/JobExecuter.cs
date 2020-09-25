@@ -27,6 +27,9 @@ namespace Core.Server.Job
         {
             lock (mJobs)
             {
+                if (mJobs.Count == 0)
+                    return;
+
                 foreach (IJob job in mJobs)
                 {
                     job.Do();
@@ -40,6 +43,9 @@ namespace Core.Server.Job
         {
             lock (mDbJobs)
             {
+                if (mDbJobs.Count == 0)
+                    return;
+
                 foreach (IDbJob job in mDbJobs)
                 {
                     job.Do();
