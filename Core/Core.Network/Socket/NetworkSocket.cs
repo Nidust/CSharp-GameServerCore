@@ -225,6 +225,7 @@ namespace Core.Network.Socket
                 return;
             }
 
+            mConnection.Dispose();
             mConnection = null;
 
             Connect(mAddress.ToString(), mPort);
