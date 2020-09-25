@@ -1,12 +1,15 @@
 ﻿using Core.Server.Job;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Core.Server.Threaded
 {
     public static class ThreadCoordinator
     {
         #region Properties
+        public static Int32 MaxFramePerSecond { get; set; }
+
         private static List<WorkerThread> mWorkerThreads;
         #endregion
 
@@ -22,7 +25,7 @@ namespace Core.Server.Threaded
             {
                 for (int threadId = 0; threadId < maxWorkerThreads; ++threadId)
                 {
-                    WorkerThread worker = new WorkerThread(threadId);
+                    WorkerThread worker = new WorkerThread(MaxFramePerSecond);
                     mWorkerThreads.Add(worker);
 
                     worker.Start(threadName);

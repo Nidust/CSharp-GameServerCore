@@ -51,6 +51,7 @@
     <Compile Include="Session\ISession.cs" />
     <Compile Include="Session\Session.cs" />
     <Compile Include="Session\SessionManager.cs" />
+    <Compile Include="Threaded\FpsWatch.cs" />
     <Compile Include="Threaded\IRunnable.cs" />
     <Compile Include="Threaded\IWorker.cs" />
     <Compile Include="Threaded\RunnableObject.cs" />

@@ -23,7 +23,7 @@ namespace Core.Server.Job
             mTimerJobsToRemove = new List<TimerJob>();
         }
 
-        public void Do()
+        public void DoJob()
         {
             lock (mJobs)
             {

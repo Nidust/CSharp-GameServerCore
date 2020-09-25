@@ -9,21 +9,22 @@ namespace Core.Server.Threaded
     {
         #region Properties
         private Thread mThread;
-        private Int32 mThreadId;
 
         private List<IRunnable> mRunnables;
         private JobExecuter mJobExecutor;
 
+        private Int32 mMaxPerFrameSecond;
+        
         private Boolean mRunning;
         #endregion
 
         #region Methods
-        public WorkerThread(int threadId)
+        public WorkerThread(Int32 fps)
         {
-            mThreadId = threadId;
             mRunnables = new List<IRunnable>();
             mJobExecutor = new JobExecuter();
 
+            mMaxPerFrameSecond = fps;
             mRunning = false;
         }
 
@@ -79,16 +80,23 @@ namespace Core.Server.Threaded
         #region Private
         private void DoWork()
         {
+            FpsWatch fpsWatch = new FpsWatch();
+
             while (mRunning)
             {
-                OnUpdate();
+                fpsWatch.Begin();
 
+                OnUpdate();
+                
                 mJobExecutor.DoDbJob();
 
-                mJobExecutor.Do();
+                mJobExecutor.DoJob();
                 mJobExecutor.DoTimer();
 
                 mJobExecutor.DoDbJob();
+
+                fpsWatch.End();
+                SleepOnFrameRate(fpsWatch);
             }
         }
 
@@ -101,6 +109,19 @@ namespace Core.Server.Threaded
                     runnable.OnUpdate();
                 }
             }
+        }
+
+        private void SleepOnFrameRate(FpsWatch fpsWatch)
+        {
+            Int32 sleepTimeMilliseconds = (Int32)((1.0f / Math.Max(mMaxPerFrameSecond, 1)) * 1000);
+            Int32 remainTimeMilliseconds = sleepTimeMilliseconds - fpsWatch.FramePerMilliseconds;
+
+            if (remainTimeMilliseconds <= 0)
+            {
+                return;
+            }
+
+            Thread.Sleep(remainTimeMilliseconds);
         }
         #endregion
     }
