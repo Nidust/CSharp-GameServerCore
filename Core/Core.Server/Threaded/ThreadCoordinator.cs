@@ -1,34 +1,36 @@
-﻿using System;
+﻿using Core.Server.Job;
+using System;
 using System.Collections.Generic;
 
 namespace Core.Server.Threaded
 {
-    public class ThreadCoordinator
+    public static class ThreadCoordinator
     {
         #region Properties
-        private List<WorkerThread> mWorkerThreads;
+        private static List<WorkerThread> mWorkerThreads;
         #endregion
 
         #region Methods
-        public ThreadCoordinator(int maxWorkerThreads)
+        static ThreadCoordinator()
         {
             mWorkerThreads = new List<WorkerThread>();
-
-            for (int threadId = 0; threadId < maxWorkerThreads; ++threadId)
-            {
-                mWorkerThreads.Add(new WorkerThread(threadId));
-            }
         }
 
-        public void Start(String threadName)
+        public static void Initialize(String threadName, int maxWorkerThreads)
         {
-            foreach (WorkerThread worker in mWorkerThreads)
+            lock (mWorkerThreads)
             {
-                worker.Start(threadName);
+                for (int threadId = 0; threadId < maxWorkerThreads; ++threadId)
+                {
+                    WorkerThread worker = new WorkerThread(threadId);
+                    mWorkerThreads.Add(worker);
+
+                    worker.Start(threadName);
+                }
             }
         }
 
-        public void Stop()
+        public static void Uninitialize()
         {
             lock (mWorkerThreads)
             {
@@ -41,26 +43,44 @@ namespace Core.Server.Threaded
             }
         }
 
-        public void AddRunnable(IRunnable runnable)
+        public static void AddRunnable(IRunnable runnable)
         {
-            lock (mWorkerThreads)
-            {
-                if (mWorkerThreads.Count == 0)
-                    return;
+            if (mWorkerThreads.Count == 0)
+                return;
 
-                mWorkerThreads[runnable.GetId() % mWorkerThreads.Count].AddRunnable(runnable);
-            }
+            mWorkerThreads[runnable.GetId() % mWorkerThreads.Count].AddRunnable(runnable);
         }
 
-        public void RemoveRunnable(IRunnable runnable)
+        public static void RemoveRunnable(IRunnable runnable)
         {
-            lock (mWorkerThreads)
-            {
-                if (mWorkerThreads.Count == 0)
-                    return;
+            if (mWorkerThreads.Count == 0)
+                return;
 
-                mWorkerThreads[runnable.GetId() % mWorkerThreads.Count].RemoveRunnable(runnable);
-            }
+            mWorkerThreads[runnable.GetId() % mWorkerThreads.Count].RemoveRunnable(runnable);
+        }
+
+        public static void PushJob(IRunnable runnable, IJob job)
+        {
+            if (mWorkerThreads.Count == 0)
+                return;
+
+            mWorkerThreads[runnable.GetId() % mWorkerThreads.Count].PushJob(job);
+        }
+
+        public static void PushDbJob(IRunnable runnable, IDbJob job)
+        {
+            if (mWorkerThreads.Count == 0)
+                return;
+
+            mWorkerThreads[runnable.GetId() % mWorkerThreads.Count].PushDbJob(job);
+        }
+
+        public static void PushTimerJob(IRunnable runnable, TimerJob job)
+        {
+            if (mWorkerThreads.Count == 0)
+                return;
+
+            mWorkerThreads[runnable.GetId() % mWorkerThreads.Count].PushTimerJob(job);
         }
         #endregion
     }

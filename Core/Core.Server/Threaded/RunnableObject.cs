@@ -4,16 +4,17 @@ using System.Threading;
 
 namespace Core.Server.Threaded
 {
-    public abstract class RunnableObject : IRunnable
+    public abstract class RunnableObject : IRunnable, IWorker
     {
         #region Properties
-        private IWorkThread mWorker;
+        private Int32 mObjectId;
 
         private static Int32 ObjectId;
         #endregion
 
         #region Abstarct Methods
         public abstract void OnUpdate();
+        public abstract void Dispose();
         #endregion
 
         #region Methods
@@ -22,34 +23,29 @@ namespace Core.Server.Threaded
             ObjectId = 0;
         }
 
-        public void SetWorker(IWorkThread worker)
+        public RunnableObject()
         {
-            mWorker = worker;
+            mObjectId = Interlocked.Increment(ref ObjectId);
         }
 
         public void PushJob(IJob job)
         {
-            mWorker.PushJob(job);
+            ThreadCoordinator.PushJob(this, job);
         }
 
         public void PushDbJob(IDbJob job)
         {
-            mWorker.PushDbJob(job);
+            ThreadCoordinator.PushDbJob(this, job);
         }
 
         public void PushTimerJob(TimerJob timerJob)
         {
-            mWorker.PushTimerJob(timerJob);
-        }
-
-        public virtual void Dispose()
-        {
-            mWorker = null;
+            ThreadCoordinator.PushTimerJob(this, timerJob);
         }
 
         public Int32 GetId()
         {
-            return Interlocked.Increment(ref ObjectId);
+            return mObjectId;
         }
         #endregion
     }

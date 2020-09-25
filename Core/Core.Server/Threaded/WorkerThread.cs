@@ -5,7 +5,7 @@ using System.Threading;
 
 namespace Core.Server.Threaded
 {
-    public class WorkerThread : IWorkThread
+    public class WorkerThread : IWorker
     {
         #region Properties
         private Thread mThread;
@@ -62,7 +62,6 @@ namespace Core.Server.Threaded
         {
             lock (mRunnables)
             {
-                runnable.SetWorker(this);
                 mRunnables.Add(runnable);
             }
         }
