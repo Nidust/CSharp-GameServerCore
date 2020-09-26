@@ -45,7 +45,7 @@ namespace Core.Network.Socket
             mConnection.SendBufferSize = MaxSendBufferSize;
         }
 
-        public bool Connect(String hostAddress, Int32 port)
+        public void Connect(String hostAddress, Int32 port)
         {
             try
             {
@@ -57,15 +57,12 @@ namespace Core.Network.Socket
                 mConnection.ReceiveTimeout = 60 * 1000;
                 mConnection.SendTimeout = 60 * 1000;
                 mConnection.BeginConnect(remoteEndPoint, new AsyncCallback(ConnectResultCallBack), new AsyncIOConnectContext(mConnection));
-
-                return true;
             }
             catch (Exception e)
             {
                 ErrorOccured(new AsyncSocketErrorEventArgs(e));
 
                 TryReconnect();
-                return false;
             }
         }
 

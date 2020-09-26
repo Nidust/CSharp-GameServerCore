@@ -16,7 +16,7 @@ namespace Core.Logger
         private static Queue<Log> Logs;
         private static StreamWriter mFileWritter;
 
-        private static Boolean mWriteConsole;
+        private static Boolean mUseConsole;
         private static Boolean mRunning;
         #endregion
 
@@ -27,10 +27,10 @@ namespace Core.Logger
             mRunning = false;
         }
 
-        public static void Initialize(String filePath, String fileName, Boolean writeConsole = true)
+        public static void Initialize(String filePath, String fileName, Boolean useConsole = true)
         {
             mRunning = true;
-            mWriteConsole = writeConsole;
+            mUseConsole = useConsole;
 
             FilePath = Path.GetDirectoryName(filePath);
             FileName = $"{DateTime.Now.ToString("yyyy-MM-dd")}_{fileName}.log";
@@ -90,7 +90,7 @@ namespace Core.Logger
 
                     String formatLog = $"{log.Timestamp} {log.Contents}";
 
-                    if (mWriteConsole)
+                    if (mUseConsole)
                     {
                         Console.ForegroundColor = log.Color;
                         Console.WriteLine(formatLog);

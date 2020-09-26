@@ -57,6 +57,11 @@ namespace Core.Server.Session
             mSocket.OnReceive += new AsyncSocketReceiveEventHandler(OnReceiveEvent);
         }
 
+        public void Connect(String ip, Int32 port)
+        {
+            mSocket.Connect(ip, port);
+        }
+
         public virtual void Send(IPacket packet)
         {
             WriteLock();
