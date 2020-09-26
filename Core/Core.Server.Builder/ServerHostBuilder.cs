@@ -1,7 +1,9 @@
-﻿using Core.Server.Builder.Configure;
+﻿using Core.Logger;
+using Core.Server.Builder.Configure;
 using Core.Server.Builder.Private;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 
 namespace Core.Server.Builder
@@ -10,6 +12,8 @@ namespace Core.Server.Builder
     {
         #region Properties
         private ManualResetEvent mTerminated;
+
+        private LogConfigure mLogConfig;
 
         private List<IServerBuilder> mPreBuilder;
         private List<IServerBuilder> mBuilder;
@@ -21,17 +25,15 @@ namespace Core.Server.Builder
         public ServerHostBuilder()
         {
             mTerminated = new ManualResetEvent(false);
-            
+
+            mLogConfig = new LogConfigure();
             mPreBuilder = new List<IServerBuilder>();
             mBuilder = new List<IServerBuilder>();
         }
 
         public ServerHostBuilder ConfigureLogging(Action<LogConfigure> setConfig)
         {
-            LogConfigure config = new LogConfigure();
-            setConfig(config);
-
-            mPreBuilder.Add(new LoggingBuilder(config));
+            setConfig(mLogConfig);
             return this;
         }
 
@@ -70,6 +72,14 @@ namespace Core.Server.Builder
 
         public ServerHostBuilder Build()
         {
+            Logger.Logger.Initialize(mLogConfig.FilePath, mLogConfig.FileName, mLogConfig.LoggingTime, mLogConfig.ConsoleUsed);
+
+            Info.Log($"------ Log Configure ------");
+            Info.Log($"File Path: {Path.Combine(mLogConfig.FilePath)}");
+            Info.Log($"File Name: {Path.Combine(mLogConfig.FileName)}");
+            Info.Log($"Time (miliseconds): {mLogConfig.LoggingTime.Milliseconds}");
+            Info.Log($"UseConsole: {mLogConfig.ConsoleUsed}");
+
             foreach (IServerBuilder builder in mPreBuilder)
             {
                 builder.Build();
@@ -116,6 +126,8 @@ namespace Core.Server.Builder
             {
                 builder.Dispose();
             }
+
+            Logger.Logger.Uninitialize();
         }
         #endregion
     }

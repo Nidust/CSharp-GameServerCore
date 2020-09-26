@@ -22,7 +22,7 @@ namespace Core.Server.Builder.Private
 
         public void Run()
         {
-            Info.Log($"------ Server Connection Configure ------");
+            Info.Log($"------ Building Server Connection ------");
 
             foreach (ServerConnection connection in mConfig.ToList())
             {

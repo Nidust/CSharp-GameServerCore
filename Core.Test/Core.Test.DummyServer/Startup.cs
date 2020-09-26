@@ -1,16 +1,15 @@
-﻿using Core.Logger;
-using Core.Server.Builder;
+﻿using Core.Server.Builder;
 using System;
 
 namespace Core.Test.DummyServer
 {
     public class Startup : IStartup
     {
-        public void PostBuild()
+        public void PreBuild()
         {
         }
 
-        public void PreBuild()
+        public void PostBuild()
         {
         }
 

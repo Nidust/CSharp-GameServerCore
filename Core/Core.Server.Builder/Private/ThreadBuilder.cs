@@ -18,7 +18,7 @@ namespace Core.Server.Builder.Private
 
         public void Build()
         {
-            Info.Log($"------ Worker Thread Configure ------");
+            Info.Log($"------ Building Thread ------");
             Info.Log($"Name: {mConfig.Name}");
             Info.Log($"FramePerSecond: {mConfig.FramePerSecond}");
             Info.Log($"Thread Count: {mConfig.WorkerThreads}");

@@ -1,5 +1,8 @@
 ﻿using Core.Logger;
 using Core.Server.Builder.Configure;
+using System;
+using System.Net;
+using System.Net.Sockets;
 
 namespace Core.Server.Builder.Private
 {
@@ -21,11 +24,12 @@ namespace Core.Server.Builder.Private
 
         public void Run()
         {
-            Info.Log($"------ Server Listener Configure ------");
+            Info.Log($"------ Building Server Listener ------");
+            Info.Log($"Listen IP: {GetLocalIP()}");
 
             foreach (ServerListener listener in mConfig.ToList())
             {
-                Info.Log($"Listener - Port:{listener.Port}, Acceptor:{listener.Manager.GetType().Name}");
+                Info.Log($"Port:{listener.Port}, Listener:{listener.Manager.GetType().Name}");
 
                 listener.Manager.StartListen(listener.Port);
             }
@@ -33,6 +37,25 @@ namespace Core.Server.Builder.Private
 
         public void Dispose()
         {
+        }
+        #endregion
+
+        #region Private
+        private String GetLocalIP()
+        {
+            String localIP = "Not available, please check your network seetings!";
+            IPHostEntry host = Dns.GetHostEntry(Dns.GetHostName());
+
+            foreach (IPAddress ip in host.AddressList)
+            {
+                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    localIP = ip.ToString();
+                    break;
+                }
+            }
+
+            return localIP;
         }
         #endregion
     }
