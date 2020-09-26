@@ -17,7 +17,7 @@ namespace Core.Test.DummyServer
                     .ConfigureThread((config) => 
                     {
                         config.SetFps(60);
-                        config.SetMaxWorkerThreads();
+                        config.SetWorkerThreads(10);
                         config.SetName("DummyWorkerThread"); 
                     })
                     .ConfigureListeners((config) =>

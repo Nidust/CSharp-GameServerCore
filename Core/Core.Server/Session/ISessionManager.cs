@@ -1,4 +1,5 @@
 ﻿using Core.Network.Packet;
+using System;
 
 namespace Core.Server.Session
 {
@@ -6,5 +7,7 @@ namespace Core.Server.Session
     {
         void Broadcast(IPacket packet);
         void DestroySession(ISession session);
+
+        Int32 GetSessionCount();
     }
 }

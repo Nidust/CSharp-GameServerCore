@@ -10,7 +10,6 @@ namespace Core.Server.Session
     public abstract class SessionManager : ISessionManager
     {
         #region Properties
-        private Object mLock;
         private Listener mListener;
 
         private Int32 mMaxReceiveBufferSize;
@@ -26,7 +25,6 @@ namespace Core.Server.Session
         #region Methods
         public SessionManager(Int32 maxReceiveBufferSize, Int32 maxSendBufferSize)
         {
-            mLock = new Object();
             mSessions = new List<ISession>();
 
             mMaxReceiveBufferSize = maxReceiveBufferSize;
@@ -44,7 +42,7 @@ namespace Core.Server.Session
 
         public void Broadcast(IPacket packet)
         {
-            lock (mLock)
+            lock (mSessions)
             {
                 foreach (var session in mSessions)
                 {
@@ -55,10 +53,18 @@ namespace Core.Server.Session
 
         public void DestroySession(ISession session)
         {
-            lock (mLock)
+            lock (mSessions)
             {
                 session.Dispose();
                 mSessions.Remove(session);
+            }
+        }
+
+        public int GetSessionCount()
+        {
+            lock (mSessions)
+            {
+                return mSessions.Count;
             }
         }
         #endregion
@@ -66,7 +72,7 @@ namespace Core.Server.Session
         #region Network Events
         private void OnAcceptEvent(object sender, AsyncSocketAcceptEventArgs e)
         {
-            lock (mLock)
+            lock (mSessions)
             {
                 Session newSesion = CreateSession(this, e.Connection);
                 e.Connection.Connected();

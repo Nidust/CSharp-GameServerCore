@@ -97,6 +97,12 @@ namespace Core.Network.Socket
         {
             try
             {
+                lock (mCalledClosedLock)
+                {
+                    if (mCalledClosed)
+                        return;
+                }
+
                 AsyncIODisconnectContext context = new AsyncIODisconnectContext(mConnection);
 
                 mConnection.Shutdown(shutdownOption);

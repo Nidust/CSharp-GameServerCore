@@ -10,7 +10,7 @@ namespace Core.Server.Session
     public abstract class Session : Locker, ISession
     {
         #region Properties
-        private ISessionManager mManager;
+        protected ISessionManager mManager;
         protected NetworkSocket mSocket;
 
         private PacketSender mSender;
@@ -123,11 +123,15 @@ namespace Core.Server.Session
         private void OnError(object sender, AsyncSocketErrorEventArgs e)
         {
             Win32Exception winException = e.Exception as Win32Exception;
-            switch (winException.ErrorCode)
+            if (winException != null)
             {
-                case 10057:
-                case 10061:
-                    return;
+                switch (winException.ErrorCode)
+                {
+                    case 10057:
+                    case 10061:
+                    case 10054:
+                        return;
+                }
             }
 
             Error.Log(e.Exception);
