@@ -8,6 +8,7 @@ namespace Core.Server.Builder.Configure
         #region Properties
         public String FilePath { get; private set; }
         public String FileName { get; private set; }
+        public TimeSpan LoggingTime { get; private set; }
         public Boolean ConsoleUsed { get; private set; }
         #endregion
 
@@ -16,7 +17,8 @@ namespace Core.Server.Builder.Configure
         {
             SetPath(Environment.CurrentDirectory);
             SetFileName("Undefined");
-            
+            SetLoggingTime(new TimeSpan(0, 0, 0, 0, 200));
+
             UseConsole(true);
         }
 
@@ -28,6 +30,11 @@ namespace Core.Server.Builder.Configure
         public void SetFileName(String name)
         {
             FileName = Path.GetFileName(name);
+        }
+
+        public void SetLoggingTime(TimeSpan loggingTime)
+        {
+            LoggingTime = loggingTime;
         }
 
         public void UseConsole(Boolean used = true)

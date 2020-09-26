@@ -18,10 +18,11 @@ namespace Core.Server.Builder.Private
 
         public void Build()
         {
-            Logger.Logger.Initialize(mConfig.FilePath, mConfig.FileName, mConfig.ConsoleUsed);
+            Logger.Logger.Initialize(mConfig.FilePath, mConfig.FileName, mConfig.LoggingTime, mConfig.ConsoleUsed);
 
             Info.Log($"------ Logging Configure ------");
-            Info.Log($"File Path: {Path.Combine(mConfig.FilePath, mConfig.FileName)}");
+            Info.Log($"Path: {Path.Combine(mConfig.FilePath, mConfig.FileName)}");
+            Info.Log($"Time (miliseconds): {mConfig.LoggingTime.Milliseconds}");
             Info.Log($"UseConsole: {mConfig.ConsoleUsed}");
         }
 

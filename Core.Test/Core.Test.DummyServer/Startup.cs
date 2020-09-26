@@ -16,7 +16,7 @@ namespace Core.Test.DummyServer
 
         public void Run()
         {
-            Logger.Logger.WriteLine(ConsoleColor.Magenta, "Server Ready");
+            Logger.Logger.WriteLine(ConsoleColor.Magenta, "[Server Ready]");
         }
     }
 }

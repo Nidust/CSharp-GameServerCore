@@ -16,6 +16,8 @@ namespace Core.Logger
         private static Queue<Log> Logs;
         private static StreamWriter mFileWritter;
 
+        private static TimeSpan mLoggingTime;
+
         private static Boolean mUseConsole;
         private static Boolean mRunning;
         #endregion
@@ -27,10 +29,11 @@ namespace Core.Logger
             mRunning = false;
         }
 
-        public static void Initialize(String filePath, String fileName, Boolean useConsole = true)
+        public static void Initialize(String filePath, String fileName, TimeSpan loggingTime, Boolean useConsole = true)
         {
             mRunning = true;
             mUseConsole = useConsole;
+            mLoggingTime = loggingTime;
 
             FilePath = Path.GetDirectoryName(filePath);
             FileName = $"{DateTime.Now.ToString("yyyy-MM-dd")}_{fileName}.log";
@@ -73,7 +76,7 @@ namespace Core.Logger
             {
                 Flush();
 
-                Thread.Sleep(200);
+                Thread.Sleep(mLoggingTime.Milliseconds);
             }
         }
 
