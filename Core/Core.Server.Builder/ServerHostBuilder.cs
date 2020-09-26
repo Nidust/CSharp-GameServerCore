@@ -19,6 +19,9 @@ namespace Core.Server.Builder
         public ServerHostBuilder()
         {
             mTerminated = new ManualResetEvent(false);
+            
+            mPreBuilder = new List<IServerBuilder>();
+            mBuilder = new List<IServerBuilder>();
         }
 
         public ServerHostBuilder ConfigureLogging(Action<LogConfigure> setConfig)

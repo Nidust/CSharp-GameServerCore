@@ -17,7 +17,8 @@ namespace Core.Server.Builder.Private
 
         public void Build()
         {
-            ThreadCoordinator.Initialize(mConfig.Name, mConfig.WorkerThreadCount);
+            ThreadCoordinator.MaxFramePerSecond = mConfig.FramePerSecond;
+            ThreadCoordinator.Initialize(mConfig.Name, mConfig.WorkerThreads);
         }
 
         public void Run()

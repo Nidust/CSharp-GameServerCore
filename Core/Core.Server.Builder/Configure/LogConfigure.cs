@@ -14,9 +14,10 @@ namespace Core.Server.Builder.Configure
         #region Methods
         public LogConfigure()
         {
-            FilePath = String.Empty;
-            FileName = String.Empty;
-            ConsoleUsed = false;
+            SetPath(Environment.CurrentDirectory);
+            SetFileName("Undefined");
+            
+            UseConsole(true);
         }
 
         public void SetPath(String path)
@@ -29,9 +30,9 @@ namespace Core.Server.Builder.Configure
             FileName = Path.GetFileName(name);
         }
 
-        public void UseConsole()
+        public void UseConsole(Boolean used = true)
         {
-            ConsoleUsed = true;
+            ConsoleUsed = used;
         }
         #endregion
     }
