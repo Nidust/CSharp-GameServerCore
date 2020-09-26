@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core.Server", "Core\Core.Se
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core.Logger", "Core\Core.Logger\Core.Logger.csproj", "{3593F838-D22D-4FF0-AFD7-5FED4C8B4A70}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core.Server.Builder", "Core\Core.Server.Builder\Core.Server.Builder.csproj", "{6542023B-59C2-4C65-A5D9-48A7FD322710}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -37,6 +39,10 @@ Global
 		{3593F838-D22D-4FF0-AFD7-5FED4C8B4A70}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3593F838-D22D-4FF0-AFD7-5FED4C8B4A70}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3593F838-D22D-4FF0-AFD7-5FED4C8B4A70}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6542023B-59C2-4C65-A5D9-48A7FD322710}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6542023B-59C2-4C65-A5D9-48A7FD322710}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6542023B-59C2-4C65-A5D9-48A7FD322710}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6542023B-59C2-4C65-A5D9-48A7FD322710}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -46,6 +52,7 @@ Global
 		{33FD6E9C-05F1-46EF-B05C-5BA9BDA0A0C6} = {785DB7D1-B498-4A23-8FF8-8F7CF09DC05C}
 		{870DF9E9-683A-4961-8E82-CC056E6B30F1} = {785DB7D1-B498-4A23-8FF8-8F7CF09DC05C}
 		{3593F838-D22D-4FF0-AFD7-5FED4C8B4A70} = {785DB7D1-B498-4A23-8FF8-8F7CF09DC05C}
+		{6542023B-59C2-4C65-A5D9-48A7FD322710} = {785DB7D1-B498-4A23-8FF8-8F7CF09DC05C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A455B4AD-D78B-4005-A565-C2BF0F9DDA3E}

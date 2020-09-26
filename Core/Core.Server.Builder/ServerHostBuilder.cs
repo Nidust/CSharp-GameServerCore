@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Core.Server.Builder.Configure;
+using Core.Server.Builder.Private;
+using System;
+using System.Collections.Generic;
 using System.Threading;
 
 namespace Core.Server.Builder
@@ -8,68 +11,92 @@ namespace Core.Server.Builder
         #region Properties
         private ManualResetEvent mTerminated;
 
-        private LoggingBuilder mLoggingBuilder;
-        private ThreadBuilder mThreadBuilder;
-        private ServerListenerBuilder mListenerBuilder;
-        private ServerConnectionBuilder mConnectionBuilder;
+        private List<IServerBuilder> mPreBuilder;
+        private List<IServerBuilder> mBuilder;
         #endregion
 
         #region Methods
         public ServerHostBuilder()
         {
             mTerminated = new ManualResetEvent(false);
-
-            mLoggingBuilder = new LoggingBuilder();
-            mThreadBuilder = new ThreadBuilder();
-            mListenerBuilder = new ServerListenerBuilder();
-            mConnectionBuilder = new ServerConnectionBuilder();
         }
 
-        public ServerHostBuilder ConfigureLogging(Action<LoggingBuilder> build)
+        public ServerHostBuilder ConfigureLogging(Action<LogConfigure> setConfig)
         {
-            build.Invoke(mLoggingBuilder);
+            LogConfigure config = new LogConfigure();
+            setConfig(config);
+
+            mPreBuilder.Add(new LoggingBuilder(config));
             return this;
         }
 
-        public ServerHostBuilder ConfigureThread(Action<ThreadBuilder> build)
+        public ServerHostBuilder ConfigureThread(Action<ThreadConfigure> setConfig)
         {
-            build.Invoke(mThreadBuilder);
+            ThreadConfigure config = new ThreadConfigure();
+            setConfig(config);
+
+            mPreBuilder.Add(new ThreadBuilder(config));
             return this;
         }
 
-        public ServerHostBuilder ConfigureListeners(Action<ServerListenerBuilder> build)
+        public ServerHostBuilder ConfigureListeners(Action<ServerListenerConfigure> setConfig)
         {
-            build.Invoke(mListenerBuilder);
+            ServerListenerConfigure config = new ServerListenerConfigure();
+            setConfig(config);
+
+            mBuilder.Add(new ServerListenerBuilder(config));
             return this;
         }
 
-        public ServerHostBuilder ConfigureConnectors(Action<ServerConnectionBuilder> build)
+        public ServerHostBuilder ConfigureConnectors(Action<ServerConnectionConfigure> setConfig)
         {
-            build.Invoke(mConnectionBuilder);
+            ServerConnectionConfigure config = new ServerConnectionConfigure();
+            setConfig(config);
+
+            mBuilder.Add(new ServerConnectionBuilder(config));
             return this;
         }
 
         public void Build()
         {
-            mLoggingBuilder.Build();
-            mThreadBuilder.Build();
+            foreach (IServerBuilder builder in mPreBuilder)
+            {
+                builder.Build();
+            }
 
-            mListenerBuilder.Build();
-            mConnectionBuilder.Build();
+            foreach (IServerBuilder builder in mBuilder)
+            {
+                builder.Build();
+            }
         }
 
         public void Run()
         {
-            mLoggingBuilder.Run();
-            mThreadBuilder.Run();
+            foreach (IServerBuilder builder in mPreBuilder)
+            {
+                builder.Run();
+            }
 
-            mListenerBuilder.Run();
-            mConnectionBuilder.Run();
+            foreach (IServerBuilder builder in mBuilder)
+            {
+                builder.Run();
+            }
 
             mTerminated.WaitOne();
+        }
 
-            mLoggingBuilder.Dispose();
-            mThreadBuilder.Dispose();
+        public void Dispose()
+        {
+            foreach (IServerBuilder builder in mBuilder)
+            {
+                builder.Dispose();
+            }
+
+            // PreBuilder에는 기본 셋팅 작업들이 많기 때문에 맨 마지막에 불러준다
+            foreach (IServerBuilder builder in mPreBuilder)
+            {
+                builder.Dispose();
+            }
         }
         #endregion
     }

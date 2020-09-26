@@ -1,6 +1,8 @@
-﻿namespace Core.Server.Builder
+﻿using System;
+
+namespace Core.Server.Builder
 {
-    interface IServerBuilder
+    public interface IServerBuilder : IDisposable
     {
         void Build();
         void Run();

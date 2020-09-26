@@ -2,22 +2,22 @@
 using System;
 using System.Collections.Generic;
 
-namespace Core.Server.Builder
+namespace Core.Server.Builder.Configure
 {
-    public class ServerListenerBuilder : IServerBuilder
+    public class ServerListener
     {
-        internal class ServerListener
-        {
-            public Int32 Port;
-            public SessionManager Manager;
-        }
+        public Int32 Port;
+        public SessionManager Manager;
+    }
 
+    public class ServerListenerConfigure
+    {
         #region Properties
         private List<ServerListener> mListeners;
         #endregion
 
         #region Methods
-        public ServerListenerBuilder()
+        public ServerListenerConfigure()
         {
             mListeners = new List<ServerListener>();
         }
@@ -31,16 +31,9 @@ namespace Core.Server.Builder
             });
         }
 
-        public void Build()
+        public IReadOnlyList<ServerListener> ToList()
         {
-        }
-
-        public void Run()
-        {
-            foreach (ServerListener listener in mListeners)
-            {
-                listener.Manager.StartListen(listener.Port);
-            }
+            return mListeners.AsReadOnly();
         }
         #endregion
     }

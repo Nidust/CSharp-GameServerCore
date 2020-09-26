@@ -1,10 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>6542023b-59c2-4c65-a5d9-48a7fd322710</ProjectGuid>
+    <ProjectGuid>{6542023B-59C2-4C65-A5D9-48A7FD322710}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Core.Server.Builder</RootNamespace>
@@ -31,24 +31,38 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System"/>
-    
-    <Reference Include="System.Core"/>
-    <Reference Include="System.Xml.Linq"/>
-    <Reference Include="System.Data.DataSetExtensions"/>
-    
-    
-    <Reference Include="Microsoft.CSharp"/>
-    
-    <Reference Include="System.Data"/>
-    
-    <Reference Include="System.Net.Http"/>
-    
-    <Reference Include="System.Xml"/>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
+    <Compile Include="Configure\LogConfigure.cs" />
+    <Compile Include="Configure\ServerConnectionConfigure.cs" />
+    <Compile Include="Configure\ServerListenerConfigure.cs" />
+    <Compile Include="Configure\ThreadConfigure.cs" />
+    <Compile Include="Private\LoggingBuilder.cs" />
+    <Compile Include="Private\ServerConnectionBuilder.cs" />
+    <Compile Include="ServerHost.cs" />
+    <Compile Include="ServerHostBuilder.cs" />
+    <Compile Include="IServerBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Private\ServerListenerBuilder.cs" />
+    <Compile Include="Private\ThreadBuilder.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Core.Logger\Core.Logger.csproj">
+      <Project>{3593f838-d22d-4ff0-afd7-5fed4c8b4a70}</Project>
+      <Name>Core.Logger</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Core.Server\Core.Server.csproj">
+      <Project>{870df9e9-683a-4961-8e82-cc056e6b30f1}</Project>
+      <Name>Core.Server</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
- </Project>
+</Project>
