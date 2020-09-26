@@ -1,4 +1,5 @@
-﻿using Core.Server.Builder.Configure;
+﻿using Core.Logger;
+using Core.Server.Builder.Configure;
 
 namespace Core.Server.Builder.Private
 {
@@ -20,8 +21,12 @@ namespace Core.Server.Builder.Private
 
         public void Run()
         {
+            Info.Log($"------ Server Listener Configure ------");
+
             foreach (ServerListener listener in mConfig.ToList())
             {
+                Info.Log($"Listener - Port:{listener.Port}, Acceptor:{listener.Manager.GetType().Name}");
+
                 listener.Manager.StartListen(listener.Port);
             }
         }

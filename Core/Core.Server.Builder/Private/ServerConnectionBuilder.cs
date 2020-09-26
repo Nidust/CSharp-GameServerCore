@@ -1,4 +1,5 @@
-﻿using Core.Server.Builder.Configure;
+﻿using Core.Logger;
+using Core.Server.Builder.Configure;
 using System;
 
 namespace Core.Server.Builder.Private
@@ -21,10 +22,14 @@ namespace Core.Server.Builder.Private
 
         public void Run()
         {
+            Info.Log($"------ Server Connection Configure ------");
+
             foreach (ServerConnection connection in mConfig.ToList())
             {
                 String ip = connection.Ip;
                 Int32 port = connection.Port;
+
+                Info.Log($"Connection - Ip:{ip}, Port:{port}");
 
                 connection.Session.Connect(ip, port);
             }

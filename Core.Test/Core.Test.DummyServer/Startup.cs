@@ -1,5 +1,6 @@
 ﻿using Core.Logger;
 using Core.Server.Builder;
+using System;
 
 namespace Core.Test.DummyServer
 {
@@ -15,7 +16,7 @@ namespace Core.Test.DummyServer
 
         public void Run()
         {
-            Info.Log("--Server Ready");
+            Logger.Logger.WriteLine(ConsoleColor.Magenta, "Server Ready");
         }
     }
 }

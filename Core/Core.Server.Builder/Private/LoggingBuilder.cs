@@ -1,4 +1,6 @@
-﻿using Core.Server.Builder.Configure;
+﻿using Core.Logger;
+using Core.Server.Builder.Configure;
+using System.IO;
 
 namespace Core.Server.Builder.Private
 {
@@ -17,6 +19,10 @@ namespace Core.Server.Builder.Private
         public void Build()
         {
             Logger.Logger.Initialize(mConfig.FilePath, mConfig.FileName, mConfig.ConsoleUsed);
+
+            Info.Log($"------ Logging Configure ------");
+            Info.Log($"File Path: {Path.Combine(mConfig.FilePath, mConfig.FileName)}");
+            Info.Log($"UseConsole: {mConfig.ConsoleUsed}");
         }
 
         public void Run()

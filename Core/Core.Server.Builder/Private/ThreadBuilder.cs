@@ -1,4 +1,5 @@
-﻿using Core.Server.Builder.Configure;
+﻿using Core.Logger;
+using Core.Server.Builder.Configure;
 using Core.Server.Threaded;
 
 namespace Core.Server.Builder.Private
@@ -17,6 +18,11 @@ namespace Core.Server.Builder.Private
 
         public void Build()
         {
+            Info.Log($"------ Worker Thread Configure ------");
+            Info.Log($"Name: {mConfig.Name}");
+            Info.Log($"FramePerSecond: {mConfig.FramePerSecond}");
+            Info.Log($"Thread Count: {mConfig.WorkerThreads}");
+
             ThreadCoordinator.MaxFramePerSecond = mConfig.FramePerSecond;
             ThreadCoordinator.Initialize(mConfig.Name, mConfig.WorkerThreads);
         }
