@@ -6,7 +6,7 @@ using System.Threading;
 
 namespace Core.Server.Builder
 {
-    public class ServerHostBuilder : IServerBuilder
+    public class ServerHostBuilder : IDisposable
     {
         #region Properties
         private ManualResetEvent mTerminated;
@@ -60,7 +60,7 @@ namespace Core.Server.Builder
             return this;
         }
 
-        public void Build()
+        public ServerHostBuilder Build()
         {
             foreach (IServerBuilder builder in mPreBuilder)
             {
@@ -71,6 +71,8 @@ namespace Core.Server.Builder
             {
                 builder.Build();
             }
+
+            return this;
         }
 
         public void Run()

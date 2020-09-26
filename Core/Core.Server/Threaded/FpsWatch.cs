@@ -47,6 +47,12 @@ namespace Core.Server.Threaded
         public void End()
         {
             Int64 average = mSampleTotal / mSampleTicks.Count;
+            
+            if (average == 0)
+            {
+                FramePerMilliseconds = 0;
+                return;
+            }
 
             FramePerMilliseconds = (Int32)((Stopwatch.Frequency / average) / 1000);
         }

@@ -13,6 +13,9 @@ namespace Core.Server.Session
         private Object mLock;
         private Listener mListener;
 
+        private Int32 mMaxReceiveBufferSize;
+        private Int32 mMaxSendBufferSize;
+
         private List<ISession> mSessions;
         #endregion
 
@@ -21,15 +24,18 @@ namespace Core.Server.Session
         #endregion
 
         #region Methods
-        public SessionManager()
+        public SessionManager(Int32 maxReceiveBufferSize, Int32 maxSendBufferSize)
         {
             mLock = new Object();
             mSessions = new List<ISession>();
+
+            mMaxReceiveBufferSize = maxReceiveBufferSize;
+            mMaxSendBufferSize = maxSendBufferSize;
         }
 
         public void StartListen(Int32 port)
         {
-            mListener = new Listener(port);
+            mListener = new Listener(port, mMaxReceiveBufferSize, mMaxSendBufferSize);
             mListener.OnAccept += new AsyncSocketAcceptEventHandler(OnAcceptEvent);
             mListener.OnError += new AsyncSocketErrorEventHandler(OnErrorEvent);
 

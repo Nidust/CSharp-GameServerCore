@@ -12,12 +12,17 @@ namespace Core.Server.Network
         private Socket mSocket;
         private Int32 mPort;
         private Int32 mListening;
+
+        private Int32 mMaxReceiveBufferSize;
+        private Int32 mMaxSendBufferSize;
         #endregion
 
         #region Methods
-        public Listener(int port)
+        public Listener(Int32 port, Int32 maxReceiveBuffeSize, Int32 maxSendBufferSize)
         {
             mPort = port;
+            mMaxReceiveBufferSize = maxReceiveBuffeSize;
+            mMaxSendBufferSize = maxSendBufferSize;
         }
 
         public void Start()
@@ -73,7 +78,7 @@ namespace Core.Server.Network
                 Socket listener = (Socket)ar.AsyncState;
                 Socket connection = listener.EndAccept(ar);
 
-                NetworkSocket newConnection = new NetworkSocket(connection, 65535, 65535);
+                NetworkSocket newConnection = new NetworkSocket(connection, mMaxReceiveBufferSize, mMaxSendBufferSize);
                 newConnection.Receive();
 
                 Accepted(new AsyncSocketAcceptEventArgs(newConnection));
