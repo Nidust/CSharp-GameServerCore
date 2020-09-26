@@ -13,6 +13,8 @@ namespace Core.Server.Builder
 
         private List<IServerBuilder> mPreBuilder;
         private List<IServerBuilder> mBuilder;
+
+        private IStartup mStartup;
         #endregion
 
         #region Methods
@@ -60,6 +62,12 @@ namespace Core.Server.Builder
             return this;
         }
 
+        public ServerHostBuilder UseStartup<Type>() where Type : IStartup, new()
+        {
+            mStartup = new Type();
+            return this;
+        }
+
         public ServerHostBuilder Build()
         {
             foreach (IServerBuilder builder in mPreBuilder)
@@ -67,10 +75,14 @@ namespace Core.Server.Builder
                 builder.Build();
             }
 
+            mStartup.PreBuild();
+
             foreach (IServerBuilder builder in mBuilder)
             {
                 builder.Build();
             }
+
+            mStartup.PostBuild();
 
             return this;
         }
@@ -86,6 +98,8 @@ namespace Core.Server.Builder
             {
                 builder.Run();
             }
+
+            mStartup.Run();
 
             mTerminated.WaitOne();
         }

@@ -45,6 +45,7 @@
     <Compile Include="Configure\ServerConnectionConfigure.cs" />
     <Compile Include="Configure\ServerListenerConfigure.cs" />
     <Compile Include="Configure\ThreadConfigure.cs" />
+    <Compile Include="IStartup.cs" />
     <Compile Include="Private\LoggingBuilder.cs" />
     <Compile Include="Private\ServerConnectionBuilder.cs" />
     <Compile Include="ServerHost.cs" />
