@@ -43,7 +43,7 @@ namespace Core.Server.Builder
             return this;
         }
 
-        public ServerHostBuilder UseConnectors(Action<ServerConnectionBuilder> build)
+        public ServerHostBuilder ConfigureConnectors(Action<ServerConnectionBuilder> build)
         {
             build.Invoke(mConnectionBuilder);
             return this;
