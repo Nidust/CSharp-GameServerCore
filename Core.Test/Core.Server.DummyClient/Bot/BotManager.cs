@@ -6,6 +6,7 @@ namespace Core.Server.DummyClient.Bot
 {
     public class BotManager
     {
+        private object mLock;
         private List<Bot> mBotList;
 
         private Boolean mDisconnectAll;
@@ -13,6 +14,7 @@ namespace Core.Server.DummyClient.Bot
 
         public BotManager()
         {
+            mLock = new object();
             mBotList = new List<Bot>();
             mDisconnectAllEvent = new AutoResetEvent(false);
         }
@@ -27,7 +29,7 @@ namespace Core.Server.DummyClient.Bot
 
         public void Add(Bot bot)
         {
-            lock (mBotList)
+            lock (mLock)
             {
                 mBotList.Add(bot);
             }
@@ -35,12 +37,9 @@ namespace Core.Server.DummyClient.Bot
 
         public void Remove(Bot bot)
         {
-            lock (mBotList)
+            lock (mLock)
             {
                 mBotList.Remove(bot);
-
-                if (mDisconnectAll && mBotList.Count == 0)
-                    mDisconnectAllEvent.Set();
             }
         }
 
@@ -48,7 +47,7 @@ namespace Core.Server.DummyClient.Bot
         {
             mDisconnectAll = true;
 
-            lock (mBotList)
+            lock (mLock)
             {
                 foreach (Bot bot in mBotList)
                 {

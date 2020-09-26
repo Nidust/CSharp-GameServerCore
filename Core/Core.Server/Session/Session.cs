@@ -114,10 +114,10 @@ namespace Core.Server.Session
 
         private void OnDisconnectEvent(object sender)
         {
-            OnDisconnect();
-
             if (mManager != null)
                 mManager.DestroySession(this);
+
+            OnDisconnect();
         }
 
         private void OnError(object sender, AsyncSocketErrorEventArgs e)

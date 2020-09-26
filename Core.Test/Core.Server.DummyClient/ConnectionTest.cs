@@ -33,6 +33,8 @@ namespace Core.Server.DummyClient
                 bot.Connect(ip, port);
             }
 
+            Thread.Sleep(1000);
+
             manager.DisconnectAll();
         }
     }

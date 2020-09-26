@@ -25,7 +25,7 @@ namespace Core.Test.DummyServer
 
         protected override void OnDisconnect()
         {
-            Debug.Log($"Disconnect Client Index:{mIndex} Session Count:{mManager.GetSessionCount() - 1}");
+            Debug.Log($"Disconnect Client Index:{mIndex} Session Count:{mManager.GetSessionCount()}");
         }
 
         protected override void OnPacket(IPacket packet)

@@ -78,7 +78,7 @@ namespace Core.Network.Socket
                 mConnection.Close();
                 mConnection.Dispose();
 
-                if (IsCalledClosed(true))
+                if (IsCalledClosed(true) == false)
                 {
                     Disconnected();
                 }
@@ -97,12 +97,6 @@ namespace Core.Network.Socket
         {
             try
             {
-                lock (mCalledClosedLock)
-                {
-                    if (mCalledClosed)
-                        return;
-                }
-
                 AsyncIODisconnectContext context = new AsyncIODisconnectContext(mConnection);
 
                 mConnection.Shutdown(shutdownOption);
@@ -253,6 +247,7 @@ namespace Core.Network.Socket
                     }
 
                     mConnection.Dispose();
+
                     return;
                 }
 

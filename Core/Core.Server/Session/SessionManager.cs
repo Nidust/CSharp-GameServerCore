@@ -75,9 +75,9 @@ namespace Core.Server.Session
             lock (mSessions)
             {
                 Session newSesion = CreateSession(this, e.Connection);
-                e.Connection.Connected();
 
                 mSessions.Add(newSesion);
+                e.Connection.Connected();
             }
         }
 

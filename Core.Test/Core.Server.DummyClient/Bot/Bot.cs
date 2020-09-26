@@ -42,7 +42,7 @@ namespace Core.Server.DummyClient.Bot
 
         public void Disconnect()
         {
-            mSocket.Close();
+            mSocket.BlockingClose(true);
         }
 
         public void Send(IPacket packet)
@@ -58,15 +58,11 @@ namespace Core.Server.DummyClient.Bot
         public void OnConnectEvent(Object sender)
         {
             OnConnect();
-
-            Manager.Add(this);
         }
 
         public void OnDisconnectEvent(Object sender)
         {
             OnDisconnect();
-
-            Manager.Remove(this);
         }
 
         public void OnReceiveEvent(Object sender, AsyncSocketReceiveEventArgs e)
