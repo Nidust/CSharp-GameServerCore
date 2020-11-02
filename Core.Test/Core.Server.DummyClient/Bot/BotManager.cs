@@ -9,7 +9,6 @@ namespace Core.Server.DummyClient.Bot
         private object mLock;
         private List<Bot> mBotList;
 
-        private Boolean mDisconnectAll;
         private AutoResetEvent mDisconnectAllEvent;
 
         public BotManager()
@@ -45,14 +44,9 @@ namespace Core.Server.DummyClient.Bot
 
         public void DisconnectAll()
         {
-            mDisconnectAll = true;
-
-            lock (mLock)
+            foreach (Bot bot in mBotList)
             {
-                foreach (Bot bot in mBotList)
-                {
-                    bot.Disconnect();
-                }
+                bot.Disconnect();
             }
 
             mDisconnectAllEvent.WaitOne();

@@ -42,7 +42,7 @@ namespace Core.Server.DummyClient.Bot
 
         public void Disconnect()
         {
-            mSocket.BlockingClose(true);
+            mSocket.Close();
         }
 
         public void Send(IPacket packet)

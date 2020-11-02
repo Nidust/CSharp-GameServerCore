@@ -257,6 +257,11 @@ namespace Core.Network.Socket
             {
                 ErrorOccured(new AsyncSocketErrorEventArgs(e));
 
+                if (IsCalledClosed(true) == false)
+                {
+                    Disconnected();
+                }
+
                 TryReconnect();
             }
         }

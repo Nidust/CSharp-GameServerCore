@@ -23,7 +23,7 @@ namespace Core.Server.DummyClient
         {
             string ip = "127.0.0.1";
             int port = 5000;
-            int testcase = 10;
+            int testcase = 100;
 
             BotManager manager = new BotManager();
 
