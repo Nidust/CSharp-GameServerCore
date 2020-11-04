@@ -1,6 +1,7 @@
 using Core.Server.DummyClient.Bot;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Core.Server.DummyClient
 {
@@ -18,12 +19,24 @@ namespace Core.Server.DummyClient
     [TestClass]
     public class ConnectionTest
     {
+        string ip = "127.0.0.1";
+        int port = 5000;
+        int testcase = 100;
+
         [TestMethod]
         public void TestConnection()
         {
-            string ip = "127.0.0.1";
-            int port = 5000;
-            int testcase = 100;
+            for (int index = 0; index < 10; index++)
+            {
+                Task.Factory.StartNew(ConnectClients);
+            }
+
+            Thread.Sleep(10000);
+        }
+
+        private void ConnectClients()
+        {
+            Thread.Sleep(1000);
 
             BotManager manager = new BotManager();
 
@@ -32,8 +45,6 @@ namespace Core.Server.DummyClient
                 ConnectionTesBot bot = manager.CreateBot<ConnectionTesBot>();
                 bot.Connect(ip, port);
             }
-
-            Thread.Sleep(1000);
 
             manager.DisconnectAll();
         }

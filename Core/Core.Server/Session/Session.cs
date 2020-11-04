@@ -1,13 +1,16 @@
 ﻿using Core.Logger;
 using Core.Network.Packet;
 using Core.Network.Socket;
+using Core.Server.Job;
 using Core.Server.Lock;
+using Core.Server.Threaded;
 using System;
 using System.ComponentModel;
+using System.Threading;
 
 namespace Core.Server.Session
 {
-    public abstract class Session : Locker, ISession
+    public abstract class Session : Locker, ISession, IRunnable, IWorker
     {
         #region Properties
         protected ISessionManager mManager;
@@ -15,6 +18,9 @@ namespace Core.Server.Session
 
         private PacketSender mSender;
         private PacketReceiver mReceiver;
+
+        private Int32 mIndex;
+        private static Int32 Index = 0;
         #endregion
 
         #region Abstract Methods
@@ -22,6 +28,7 @@ namespace Core.Server.Session
         protected abstract void OnDisconnect();
         protected abstract void OnPacket(IPacket packet);
         protected abstract void OnSend(); // 무슨 패킷 보냈는지도 필요할까..?
+        public abstract void OnUpdate();
         #endregion
 
         #region Methods
@@ -31,6 +38,9 @@ namespace Core.Server.Session
 
             mSender = new PacketSender();
             mReceiver = new PacketReceiver();
+
+            mIndex = Interlocked.Increment(ref Index);
+            ThreadCoordinator.AddRunnable(this);
         }
 
         public Session(Int32 receiveBufferSize, Int32 sendBufferSize, NetworkConnectionType connectionType)
@@ -64,27 +74,45 @@ namespace Core.Server.Session
 
         public virtual void Send(IPacket packet)
         {
-            WriteLock();
-            {
-                mSender.Send(mSocket, packet);
-            }
-            WriteUnlock();
+            mSender.Send(mSocket, packet);
+        }
+
+        public void PushJob(IJob job)
+        {
+            ThreadCoordinator.PushJob(this, job);
+        }
+
+        public void PushDbJob(IDbJob job)
+        {
+            ThreadCoordinator.PushDbJob(this, job);
+        }
+
+        public void PushTimerJob(TimerJob timerJob)
+        {
+            ThreadCoordinator.PushTimerJob(this, timerJob);
+        }
+
+        public int GetId()
+        {
+            return mIndex;
+        }
+
+        public void Dispose()
+        {
+            mSocket.Close();
+            mSender.Dispose();
         }
         #endregion
 
         #region Network Events
         private void OnSendEvent(object sender, AsyncSocketSendEventArgs e)
         {
-            WriteLock();
-            {
-                Boolean sendComplete = mSender.Sending(mSocket, (UInt16)e.BytesWritten);
+            Boolean sendComplete = mSender.Sending(mSocket, (UInt16)e.BytesWritten);
 
-                if (sendComplete == false)
-                {
-                    return;
-                }
+            if (sendComplete == false)
+            {
+                return;
             }
-            WriteUnlock();
 
             OnSend();
         }
@@ -92,17 +120,12 @@ namespace Core.Server.Session
         private void OnReceiveEvent(object sender, AsyncSocketReceiveEventArgs e)
         {
             IPacket receivePacket = null;
+            Boolean receiveComeplete = mReceiver.Receiving(e.ReceiveBuffer, e.ReceiveBytes, out receivePacket);
 
-            WriteLock();
+            if (receiveComeplete == false)
             {
-                Boolean receiveComeplete = mReceiver.Receiving(e.ReceiveBuffer, e.ReceiveBytes, out receivePacket);
-
-                if (receiveComeplete == false)
-                {
-                    return;
-                }
+                return;
             }
-            WriteUnlock();
 
             OnPacket(receivePacket);
         }
@@ -114,6 +137,8 @@ namespace Core.Server.Session
 
         private void OnDisconnectEvent(object sender)
         {
+            ThreadCoordinator.RemoveRunnable(this);
+
             if (mManager != null)
                 mManager.DestroySession(this);
 
@@ -135,16 +160,6 @@ namespace Core.Server.Session
             }
 
             Error.Log(e.Exception);
-        }
-
-        public void Dispose()
-        {
-            WriteLock();
-            {
-                mSocket.Close();
-                mSender.Dispose();
-            }
-            WriteUnlock();
         }
         #endregion
     }

@@ -9,13 +9,10 @@ namespace Core.Server.DummyClient.Bot
         private object mLock;
         private List<Bot> mBotList;
 
-        private AutoResetEvent mDisconnectAllEvent;
-
         public BotManager()
         {
             mLock = new object();
             mBotList = new List<Bot>();
-            mDisconnectAllEvent = new AutoResetEvent(false);
         }
 
         public BotType CreateBot<BotType>() where BotType : Bot, new()
@@ -49,7 +46,7 @@ namespace Core.Server.DummyClient.Bot
                 bot.Disconnect();
             }
 
-            mDisconnectAllEvent.WaitOne();
+            mBotList.Clear();
         }
     }
 }

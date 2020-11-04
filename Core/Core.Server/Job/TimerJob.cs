@@ -13,6 +13,7 @@ namespace Core.Server.Job
 
         #region Abstract Methods
         public abstract void Do();
+        public abstract int GetId();
         #endregion
 
         #region Methods

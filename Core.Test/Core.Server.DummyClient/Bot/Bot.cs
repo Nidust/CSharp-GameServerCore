@@ -68,15 +68,11 @@ namespace Core.Server.DummyClient.Bot
         public void OnReceiveEvent(Object sender, AsyncSocketReceiveEventArgs e)
         {
             IPacket receivePacket = null;
+            Boolean receiveComeplete = mReceiver.Receiving(e.ReceiveBuffer, e.ReceiveBytes, out receivePacket);
 
-            lock (mReceiver)
+            if (receiveComeplete == false)
             {
-                Boolean receiveComeplete = mReceiver.Receiving(e.ReceiveBuffer, e.ReceiveBytes, out receivePacket);
-
-                if (receiveComeplete == false)
-                {
-                    return;
-                }
+                return;
             }
 
             OnPacket(receivePacket);
@@ -84,14 +80,11 @@ namespace Core.Server.DummyClient.Bot
 
         public void OnSendEvent(Object sender, AsyncSocketSendEventArgs e)
         {
-            lock (mSender)
-            {
-                Boolean sendComplete = mSender.Sending(mSocket, (UInt16)e.BytesWritten);
+            Boolean sendComplete = mSender.Sending(mSocket, (UInt16)e.BytesWritten);
 
-                if (sendComplete == false)
-                {
-                    return;
-                }
+            if (sendComplete == false)
+            {
+                return;
             }
 
             OnSend();

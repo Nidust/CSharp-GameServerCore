@@ -85,6 +85,14 @@ namespace Core.Server.Threaded
 
             mWorkerThreads[runnable.GetId() % mWorkerThreads.Count].PushTimerJob(job);
         }
+
+        public static void PushTimerJob(TimerJob job)
+        {
+            if (mWorkerThreads.Count == 0)
+                return;
+
+            mWorkerThreads[job.GetId() % mWorkerThreads.Count].PushTimerJob(job);
+        }
         #endregion
     }
 }

@@ -2,8 +2,10 @@
 
 namespace Core.Test.DummyServer
 {
-    class Program
+    public class Program
     {
+        public static ClientSessionManager ClientSessionManager = new ClientSessionManager();
+
         static void Main(string[] args)
         {
             using (ServerHostBuilder builder = ServerHost.CreateDefaultBuilder())
@@ -22,7 +24,7 @@ namespace Core.Test.DummyServer
                     })
                     .ConfigureListeners((config) =>
                     {
-                        config.AddListener(5000, new ClientSessionManager());
+                        config.AddListener(5000, ClientSessionManager);
                     })
                     .UseStartup<Startup>()
                     .Build()
